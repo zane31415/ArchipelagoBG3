@@ -1,4 +1,5 @@
 from __future__ import annotations
+from itertools import count
 
 import os
 import sys
@@ -24,7 +25,7 @@ from CommonClient import gui_enabled, logger, get_base_parser, ClientCommandProc
     CommonContext, server_loop
 
 wg_logger = logging.getLogger("WG")
-
+bugged_locations = []
 
 class BG3ClientCommandProcessor(ClientCommandProcessor):
     def _cmd_resync(self):
@@ -127,6 +128,8 @@ class BG3Context(CommonContext):
 
         if cmd in {"ReceivedItems"}:
             received_items = [AP_ITEM_TO_BG3_ID[self.item_names.lookup_in_game(network_item.item)] for network_item in self.items_received]
+            counter = count()
+            received_items = [f"LevelUp<{next(counter)}>" if item == "LevelUp" else item for item in received_items]
             path = os.path.join(self.se_bg3, self.comm_file_sent_items)
             with open(path, 'w') as f:
                 json.dump(received_items, f)
@@ -162,8 +165,11 @@ async def game_watcher(ctx: BG3Context):
                         if apLoc not in ctx.checked_locations and apLoc in LOCATION_NAME_TO_ID:
                             sending = sending + [LOCATION_NAME_TO_ID[apLoc]]
                             ctx.checked_locations.add(LOCATION_NAME_TO_ID[apLoc])
-                        if apLoc == "Act1-Over: Woke on Beach":
+                        if apLoc == "Victory_Halsin":
                             victory = True
+                elif loc not in bugged_locations:
+                    logger.error(f"Please tell BG3 channel about {loc}- it was not handled. This probably doesn't break anything, but it should be looked at.")
+                    bugged_locations.append(loc)
            
             message = [{"cmd": 'LocationChecks', "locations": sending}]
             await ctx.send_msgs(message)

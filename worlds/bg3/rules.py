@@ -21,14 +21,18 @@ def set_all_rules(world: BG3World) -> None:
 
 
 def set_all_entrance_rules(world: BG3World) -> None:
-    # First, we need to actually grab our entrances. Luckily, there is a helper method for this.
-    tutorial_to_overworld = world.get_entrance("Tutorial to Overworld")
-
-    # Because the function has to be defined locally, most worlds prefer the lambda syntax.
-    set_rule(tutorial_to_overworld, lambda state: state.has("Level Up", world.player))
-
+    # Entrances handled in regions.py
+    pass
 
 def set_completion_condition(world: BG3World) -> None:
     # In our case, we went for the Victory event design pattern (see regions.py).
     # So lets undo what we just did, and instead set the completion condition to:
+    #if (world.options.goal == world.options.goal.option_rescue_halsin):
+    #    world.multiworld.completion_condition[world.player] = lambda state: state.has("Victory", world.player)
+    #elif (world.options.goal == world.options.goal.option_kill_inquisitor_wwargaz):
+    #    world.multiworld.completion_condition[world.player] = lambda state: state.has("Victory", world.player)
+    #elif (world.options.goal == world.options.goal.option_kill_myrkul):
+    #    world.multiworld.completion_condition[world.player] = lambda state: state.has("Victory", world.player)
+    #elif (world.options.goal == world.options.goal.option_kill_nether_brain):
+    #    world.multiworld.completion_condition[world.player] = lambda state: state.has("Victory", world.player)
     world.multiworld.completion_condition[world.player] = lambda state: state.has("Victory", world.player)
