@@ -130,8 +130,6 @@ def create_regular_locations(world: BG3World) -> None:
         "Grove-Sazza: Free Sazza",
         "Grove-Sazza: Escort Sazza out",
         "Grove-Idol: Get Asked to Steal the Idol",
-        "Grove-Idol: Steal the Idol",
-        "Grove-Idol: Give Idol to Mol",
         "Lae'zel: Find out about Zorru",
         "Lae'zel: Talk to Zorru",
         "Shart: See Wound",
@@ -188,7 +186,9 @@ def create_regular_locations(world: BG3World) -> None:
         "Plot-Art: Hear Minthara talk about Artefact",
         "Plot-Art: Hear Ragzlin talk about Artefact",
         "Tadpole: Told by Guardian to find Tadpoles",
-        "Tadpole: Guardian Suggests Consuming Tadpole",]
+        "Tadpole: Guardian Suggests Consuming Tadpole",
+        "Grove-Idol: Steal the Idol",
+        "Grove-Idol: Give Idol to Mol",]
     )
     goblin_camp.add_locations(goblin_camp_locations, BG3Location)
 

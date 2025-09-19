@@ -217,7 +217,7 @@ EQUIPMENT = [
     ["Bigboy's Chew Toy", "59cd94ae-c26c-459a-89d8-a1f1ebdd13ba", 2],
     ["Blackguard's Sword", "0a11f6f4-5605-4dff-a3e6-b172e4dba555", 3],
     ["Blade of Oppressed Souls", "0a024202-84d0-4466-a958-76b2a163781c", 2],
-    ["Blooded Greataxe", "e1e090ec-ab8c-4db4-a0c3-8b7ab24bb181", 1],
+    ["Blooded Greataxe", "e1e090ec-ab8c-4db4-a0c3-8b7ab24bb181", 0],
     ["Breaching Pikestaff", "661ac892-ee92-46ca-b1b4-1c1df10c7bf0", 3],
     ["Cacophony", "4708068e-542a-4dfb-b8a0-56e1ee371600", 1],
     ["Caitiff Staff", "518d1630-d2bf-4dca-8c24-9d7ba9d529f3", 3],

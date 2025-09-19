@@ -165,6 +165,8 @@ async def game_watcher(ctx: BG3Context):
                         if apLoc not in ctx.checked_locations and apLoc in LOCATION_NAME_TO_ID:
                             sending = sending + [LOCATION_NAME_TO_ID[apLoc]]
                             ctx.checked_locations.add(LOCATION_NAME_TO_ID[apLoc])
+                        if apLoc not in LOCATION_NAME_TO_ID:
+                            logger.error(f"BUG: Please tell BG3 channel that {apLoc} is a typo and needs fixing. This location may need a server send_location to fix this run.")
                         if apLoc == "Victory_Halsin":
                             victory = True
                 elif loc not in bugged_locations:
