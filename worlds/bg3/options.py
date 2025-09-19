@@ -43,7 +43,7 @@ class AddAct1ATreasure(Toggle):
 
 class AddAct1BTreasure(Toggle):
     """
-    Adds 65 items into the pool.
+    Adds 62 items into the pool.
     """
     display_name = "Add Act 1 Underdark Treasure"
     default = True
