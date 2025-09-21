@@ -21,6 +21,23 @@ class Goal(Choice):
 
     default = option_rescue_halsin
 
+class SyncMethod(Choice):
+    """
+    Determines how AP items will be delivered into BG3. All options will still have the AP Sync scroll, it just will be a No-op if not needed.
+    Scroll_Tav - Items will only be generated when the scroll is cast, and placed in Tav's inventory.
+    Any_action_Tav - Items will be generated when ANYBODY takes ANY action that the game considers worth triggering the listener flag for
+        (which is most things). Items will be given to the character currently being controlled. This may (will likely) cause encumbrance issues, potentially even during combat.
+    Any_action_chest - Items will be generated as any_action_tav, but items will instead spawn into the camp chest.
+    """
+
+    display_name = "SyncMethod"
+
+    option_scroll_tav = 0
+    option_any_action_tav = 1
+    option_any_action_chest = 2
+
+    default = option_any_action_tav
+
 class TrimTreasureMethod(Choice):
     """
     The standard method of having 1:1 items:locations does not work for BG3. Each option instead lists how many locations or items they add.
@@ -62,42 +79,42 @@ class AddAct3Treasure(Toggle):
     display_name = "Add Act 3 Treasure"
     default = False
 
-class ObjectsAsChecks(Toggle):
-    """
-    Makes all rare+ items into AP items. This adds more locations into the pool. Currently unimplemented.
-    """
-
-    display_name = "Objects as Checks"
-    default = False
-
-
-class FeatsAsItems(Toggle):
-    """
-    If true, no feats will be allowed to be taken on level up, and additional items will be added to the pool
-    that grant feats when received. Currently unimplemented.
-    """
-
-    display_name = "Feats as Items"
-    default = False
+#class ObjectsAsChecks(Toggle):
+#    """
+#    Makes all rare+ items into AP items. This adds more locations into the pool. Currently unimplemented.
+#    """
+#
+#    display_name = "Objects as Checks"
+#    default = False
 
 
-class StatsAsItems(Toggle):
-    """
-    If true, Tav will have base 8 in all stats, and additional items will be added to the pool
-    that grant stat improvements when received. Currently unimplemented.
-    """
+#class FeatsAsItems(Toggle):
+#    """
+#    If true, no feats will be allowed to be taken on level up, and additional items will be added to the pool
+#    that grant feats when received. Currently unimplemented.
+#    """
 
-    display_name = "Stats as Items"
-    default = False
+#    display_name = "Feats as Items"
+#    default = False
 
-class ApprovalItems(Toggle):
-    """
-    If true, additional items will be added to the pool that will randomly increase or decrease random
-    companions' approval when received. Currently unimplemented.
-    """
 
-    display_name = "Approval Items"
-    default = False
+#class StatsAsItems(Toggle):
+#    """
+#    If true, Tav will have base 8 in all stats, and additional items will be added to the pool
+#    that grant stat improvements when received. Currently unimplemented.
+#    """
+
+#    display_name = "Stats as Items"
+#    default = False
+
+#class ApprovalItems(Toggle):
+#    """
+#    If true, additional items will be added to the pool that will randomly increase or decrease random
+#    companions' approval when received. Currently unimplemented.
+#    """
+
+#    display_name = "Approval Items"
+#    default = False
 
 
 
@@ -106,13 +123,14 @@ class ApprovalItems(Toggle):
 @dataclass
 class BG3Options(PerGameCommonOptions):
     goal: Goal
+    sync_method: SyncMethod
     trim_treasure_method: TrimTreasureMethod
     add_act1a_treasure: AddAct1ATreasure
     add_act1b_treasure: AddAct1BTreasure
     add_act2_treasure: AddAct2Treasure
     add_act3_treasure: AddAct3Treasure
-    objects_as_checks: ObjectsAsChecks
-    feats_as_items: FeatsAsItems
-    stats_as_items: StatsAsItems
-    approval_items: ApprovalItems
+#    objects_as_checks: ObjectsAsChecks
+#    feats_as_items: FeatsAsItems
+#    stats_as_items: StatsAsItems
+#    approval_items: ApprovalItems
 

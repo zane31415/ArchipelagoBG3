@@ -10,10 +10,10 @@ if TYPE_CHECKING:
 from .equipment import EQUIPMENT
 
 FILLER_EQUIPMENT = [
-    ["Lockpick", "6d0d9e73-a922-47e8-88b8-842b977ecb20"],
+    ["Lockpick", "e32a200c-5b63-414d-ae57-00e7b38f125b"],
     ["Supply Pack", "a24a2ca2-a213-424c-833d-47c79934c0ce"],
     ["Is that blood? No, nevermind.", "af808d7c-c8d6-4924-94a9-35bffd450803"],
-    ["100 Gold", "Gold-100"],
+    ["100 Gold", "Gold-000100"],
 ]
 
 #[game item name, id in BG3, int id in AP, classification, filter level]

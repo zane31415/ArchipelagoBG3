@@ -7,7 +7,8 @@ import asyncio
 from typing import Tuple, List, Iterable, Dict
 
 from .world import BG3World
-from .items import ITEM_NAME_TO_ID, AP_ITEM_TO_BG3_ID
+from .items import AP_ITEM_TO_BG3_ID
+from .equipment import EQUIPMENT
 from .locations import BG3_LOCATION_TO_AP_LOCATIONS, LOCATION_NAME_TO_ID
 
 import ModuleUpdate
@@ -25,7 +26,8 @@ from CommonClient import gui_enabled, logger, get_base_parser, ClientCommandProc
     CommonContext, server_loop
 
 wg_logger = logging.getLogger("WG")
-bugged_locations = []
+bugged_locations = ["Victory_Halsin", "Victory_Wwargaz"]
+goal = 0
 
 class BG3ClientCommandProcessor(ClientCommandProcessor):
     def _cmd_resync(self):
@@ -42,6 +44,8 @@ class BG3Context(CommonContext):
     se_bg3 = ''
     comm_file_sent_items = "ap_in.json"
     comm_file_locations_checked = "ap_out.json"
+    item_uuids = "items_to_remove.json"
+    sync_option = "ap_options.json"
 
     def __init__(self, server_address, password):
         super(BG3Context, self).__init__(server_address, password)
@@ -51,16 +55,16 @@ class BG3Context(CommonContext):
         # self.game_communication_path: files go in this path to pass data between us and the actual game
         game_options = BG3World.settings
 
-        appdata_bg3 = os.path.join("%LOCALAPPDATA%", "Larian Studios", "Baldur's Gate 3")
-        #logger.debug(f"Game options: {game_options}")
-        #logger.debug(f"Root directory: {game_options['root_directory']}")
-        #logger.debug(os.path.expandvars(os.path.join(game_options['root_directory'], "Script Extender")))
-        #try:
-        #    appdata_bg3 = game_options["root_directory"]
-        #except FileNotFoundError:
-        #    print_error_and_close("BG3Client couldn't detect a path to the Baldur's Gate 3 folder.\n"
-        #                            "Try setting the \"root_directory\" value in your local options file "
-        #                            "to the folder BG3 is installed to.")
+        appdata_bg3 = ""
+        if "localappdata" in os.environ:
+            appdata_bg3 = os.path.join(os.environ['localappdata'], "Larian Studios", "Baldur's Gate 3")
+        else:
+            try:
+                appdata_bg3 = game_options.root_directory
+            except FileNotFoundError:
+                print_error_and_close("BG3Client couldn't detect a path to the Baldur's Gate 3 folder.\n"
+                                        "Try setting the \"root_directory\" value in your local options file "
+                                        "to the folder BG3 is installed to.")
         self.se_bg3 = os.path.expandvars(os.path.join(appdata_bg3, "Script Extender"))
 
         if not os.path.isdir(self.se_bg3):
@@ -74,6 +78,9 @@ class BG3Context(CommonContext):
         if not os.path.isfile(os.path.join(self.se_bg3, self.comm_file_locations_checked)):
             with open(self.comm_file_locations_checked, "w") as file:
                 file.write("[]")
+        list_of_guids = [item[1] for item in EQUIPMENT]
+        with open(os.path.join(self.se_bg3, self.item_uuids), "w") as file:
+            json.dump(list_of_guids, file)
 
     async def server_auth(self, password_requested: bool = False):
         if password_requested and not self.password:
@@ -122,14 +129,28 @@ class BG3Context(CommonContext):
     def on_package(self, cmd: str, args: dict):
         if cmd in {"Connected"}:
             slot_data = args["slot_data"]
+            global goal
+            goal = slot_data["goal"]
+            sync_option_path = os.path.join(self.se_bg3, self.sync_option)
+            with open(sync_option_path, 'w') as f:
+                json.dump(slot_data, f)
+            received_items = [AP_ITEM_TO_BG3_ID[self.item_names.lookup_in_game(network_item.item)] for network_item in self.items_received]
+            counter = count()
+            received_items = [f"LevelUp<{next(counter)}>" if item == "LevelUp" else item for item in received_items]
+            path = os.path.join(self.se_bg3, self.comm_file_sent_items)
+            with open(path, 'w') as f:
+                json.dump(received_items, f)
 
         if cmd in {"RoomInfo"}:
             self.seed_name = args["seed_name"]
 
         if cmd in {"ReceivedItems"}:
             received_items = [AP_ITEM_TO_BG3_ID[self.item_names.lookup_in_game(network_item.item)] for network_item in self.items_received]
-            counter = count()
-            received_items = [f"LevelUp<{next(counter)}>" if item == "LevelUp" else item for item in received_items]
+            levelcounter = count()
+            goldcounter = count()
+            received_items = [f"LevelUp<{next(levelcounter)}>" if item == "LevelUp" \
+                              else f"{item}-{next(goldcounter)}" if item == "Gold-000100" \
+                              else item for item in received_items]
             path = os.path.join(self.se_bg3, self.comm_file_sent_items)
             with open(path, 'w') as f:
                 json.dump(received_items, f)
@@ -138,8 +159,10 @@ class BG3Context(CommonContext):
             if "checked_locations" in args:
                 path = os.path.join(self.se_bg3, self.comm_file_locations_checked)
                 #And then we did nothing with it
+            logger.error("RoomUpdate")
 
 async def game_watcher(ctx: BG3Context):
+    once = False
     while not ctx.exit_event.is_set():
         try:
             if ctx.syncing == True:
@@ -156,6 +179,9 @@ async def game_watcher(ctx: BG3Context):
             if (os.path.isfile(path)):
                 with open(path, 'r') as f:
                     bg3LocationsToSend = json.load(f)
+                # Clear out the locations to send file for changing between runs
+#                with open(path, 'w') as f:
+#                    f.write("[]")
             else:
                 with open(path, 'w') as f:
                     f.write("[]")
@@ -165,14 +191,16 @@ async def game_watcher(ctx: BG3Context):
                         if apLoc not in ctx.checked_locations and apLoc in LOCATION_NAME_TO_ID:
                             sending = sending + [LOCATION_NAME_TO_ID[apLoc]]
                             ctx.checked_locations.add(LOCATION_NAME_TO_ID[apLoc])
-                        if apLoc not in LOCATION_NAME_TO_ID:
+                        if apLoc not in LOCATION_NAME_TO_ID and apLoc not in bugged_locations:
                             logger.error(f"BUG: Please tell BG3 channel that {apLoc} is a typo and needs fixing. This location may need a server send_location to fix this run.")
-                        if apLoc == "Victory_Halsin":
+                            bugged_locations.append(apLoc)
+                        if apLoc == "Victory_Halsin" and goal == 0:
+                            victory = True
+                        elif apLoc == "Victory_Wwargaz" and goal == 1:
                             victory = True
                 elif loc not in bugged_locations:
                     logger.error(f"Please tell BG3 channel about {loc}- it was not handled. This probably doesn't break anything, but it should be looked at.")
                     bugged_locations.append(loc)
-           
             message = [{"cmd": 'LocationChecks', "locations": sending}]
             await ctx.send_msgs(message)
             if not ctx.finished_game and victory:

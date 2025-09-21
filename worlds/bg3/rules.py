@@ -25,14 +25,4 @@ def set_all_entrance_rules(world: BG3World) -> None:
     pass
 
 def set_completion_condition(world: BG3World) -> None:
-    # In our case, we went for the Victory event design pattern (see regions.py).
-    # So lets undo what we just did, and instead set the completion condition to:
-    #if (world.options.goal == world.options.goal.option_rescue_halsin):
-    #    world.multiworld.completion_condition[world.player] = lambda state: state.has("Victory", world.player)
-    #elif (world.options.goal == world.options.goal.option_kill_inquisitor_wwargaz):
-    #    world.multiworld.completion_condition[world.player] = lambda state: state.has("Victory", world.player)
-    #elif (world.options.goal == world.options.goal.option_kill_myrkul):
-    #    world.multiworld.completion_condition[world.player] = lambda state: state.has("Victory", world.player)
-    #elif (world.options.goal == world.options.goal.option_kill_nether_brain):
-    #    world.multiworld.completion_condition[world.player] = lambda state: state.has("Victory", world.player)
     world.multiworld.completion_condition[world.player] = lambda state: state.has("Victory", world.player)
