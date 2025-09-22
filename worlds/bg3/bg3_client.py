@@ -159,7 +159,6 @@ class BG3Context(CommonContext):
             if "checked_locations" in args:
                 path = os.path.join(self.se_bg3, self.comm_file_locations_checked)
                 #And then we did nothing with it
-            logger.error("RoomUpdate")
 
 async def game_watcher(ctx: BG3Context):
     once = False

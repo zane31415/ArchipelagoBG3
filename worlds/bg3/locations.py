@@ -38,6 +38,7 @@ def create_regular_locations(world: BG3World) -> None:
     hag = world.get_region("Hag")
     underdark = world.get_region("Underdark")
     grymforge = world.get_region("Grymforge")
+    monastery = world.get_region("Monastery")
     creche = world.get_region("Creche")
 
     east_act2 = world.get_region("East Act 2")
@@ -112,15 +113,32 @@ def create_regular_locations(world: BG3World) -> None:
 
     # Done with Halsin goal. Following additions are for other goals.
     if (world.options.goal != world.options.goal.option_rescue_halsin):
-        underdark_locations = get_location_names_with_ids(
-            ["Gale: Fed a Second Item",
-            "Gale: Fed a Third Item",
-            "Gale: Told Backstory"]
-        )
+        underdark_location_names = []
+        for loc in LOCATION_NAME_ID_REGION:
+            if (loc[2] == 'underdark'):
+                underdark_location_names.append(loc[0])
+        underdark_locations = get_location_names_with_ids(underdark_location_names)
         underdark.add_locations(underdark_locations, BG3Location)
-        creche_locations = get_location_names_with_ids(
-            ["Gale: Met Elminster"]
-        )
+
+        grymforge_location_names = []
+        for loc in LOCATION_NAME_ID_REGION:
+            if (loc[2] == 'grymforge'):
+                grymforge_location_names.append(loc[0])
+        grymforge_locations = get_location_names_with_ids(grymforge_location_names)
+        grymforge.add_locations(grymforge_locations, BG3Location)
+
+        monastery_location_names = []
+        for loc in LOCATION_NAME_ID_REGION:
+            if (loc[2] == 'monastery'):
+                monastery_location_names.append(loc[0])
+        monastery_locations = get_location_names_with_ids(monastery_location_names)
+        monastery.add_locations(monastery_locations, BG3Location)
+
+        creche_location_names = []
+        for loc in LOCATION_NAME_ID_REGION:
+            if (loc[2] == 'creche'):
+                creche_location_names.append(loc[0])
+        creche_locations = get_location_names_with_ids(creche_location_names)
         creche.add_locations(creche_locations, BG3Location)
 
     if (world.options.goal == world.options.goal.option_rescue_halsin):

@@ -73,6 +73,7 @@ def connect_regions(world: BG3World) -> None:
     goblin_camp = world.get_region("Goblin Camp")
     waukeen = world.get_region("Waukeen")
     hag = world.get_region("Hag")
+    
     underdark = world.get_region("Underdark")
     grymforge = world.get_region("Grymforge")
     monastery = world.get_region("Monastery")
