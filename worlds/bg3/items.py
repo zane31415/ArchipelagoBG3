@@ -12,8 +12,16 @@ from .equipment import EQUIPMENT
 FILLER_EQUIPMENT = [
     ["Lockpick", "e32a200c-5b63-414d-ae57-00e7b38f125b"],
     ["Supply Pack", "a24a2ca2-a213-424c-833d-47c79934c0ce"],
+    ["Trap Disarm Pack", "22c74b5e-bef2-41b1-b9ed-f4acc766d4ee"],
     ["Is that blood? No, nevermind.", "af808d7c-c8d6-4924-94a9-35bffd450803"],
     ["100 Gold", "Gold-000100"],
+    ["200 Gold", "Gold-000200"],
+]
+
+TRAP_OPTIONS = [
+    ["Monster Spawn Trap", "Trap-Monster"],
+    ["Bleeding Trap", "Trap-Bleeding"],
+    ["Stunned Trap", "Trap-Stun"]
 ]
 
 #[game item name, id in BG3, int id in AP, classification, filter level]
@@ -24,7 +32,8 @@ ITEM_TUPLES = [
     ["Shadow Lantern", "c9ebcfae-8c9a-4acc-8a30-da7830b32121", 3, ItemClassification.progression, 2],
     ["Spear of Night", "d590884d-55a2-4136-9777-531ee7d53f7e", 4, ItemClassification.progression, 2],
 ] + [[item[0], item[1], index + 1000, ItemClassification.useful, item[2]] for index, item in enumerate(EQUIPMENT)] \
-  + [[item[0], item[1], index + 5000, ItemClassification.filler, 0] for index, item in enumerate(FILLER_EQUIPMENT)]
+  + [[item[0], item[1], index + 5000, ItemClassification.filler, 0] for index, item in enumerate(FILLER_EQUIPMENT)] \
+  + [[item[0], item[1], index + 7000, ItemClassification.trap, 0] for index, item in enumerate(TRAP_OPTIONS)] 
 # Every item must have a unique integer ID associated with it.
 # We will have a lookup from item name to ID here that, in world.py, we will import and bind to the world class.
 # Even if an item doesn't exist on specific options, it must be present in this lookup.
@@ -44,6 +53,20 @@ class BG3Item(Item):
 # To do this, it must define a function called world.get_filler_item_name(), which we will define in world.py later.
 # For now, let's make a function that returns the name of a random filler item here in items.py.
 def get_random_filler_item_name(world: BG3World) -> str:
+    if (world.random.randint(0, 100) < world.options.traps_percentage):
+        trap_count = 0
+        traps = []
+        for trap in world.options.enabled_traps:
+            trap_count = trap_count + 1
+            traps.append(trap)
+        index = world.random.randint(0, trap_count - 1)
+        trap = traps[index]
+        if (trap == "Monster"):
+            return TRAP_OPTIONS[0][0]
+        if (trap == "Bleeding"):
+            return TRAP_OPTIONS[1][0]
+        if (trap == "Stun"):
+            return TRAP_OPTIONS[2][0]
     index = world.random.randint(0, len(FILLER_EQUIPMENT) - 1)
     return FILLER_EQUIPMENT[index][0]
 
@@ -72,6 +95,7 @@ def create_all_items(world: BG3World) -> None:
     elif (world.options.goal == world.options.goal.option_kill_nether_brain):
         levelups_to_add = 11
 
+    levelups_to_add = levelups_to_add + world.options.additional_level_ups
     itempool += [world.create_item("Level Up") for _ in range(levelups_to_add)]
     # Here we would add other progression items as we have them.
 

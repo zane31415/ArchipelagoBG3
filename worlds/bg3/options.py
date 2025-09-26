@@ -1,40 +1,49 @@
 from dataclasses import dataclass
 
-from Options import Choice, OptionGroup, PerGameCommonOptions, Range, Toggle
+from Options import Choice, OptionGroup, PerGameCommonOptions, Range, Toggle, OptionSet
 
 class Goal(Choice):
     """
     Determines what location counts as victory. Currently only Act 1 goals are supported.
     These goals also determine how many level ups are placed in the pool-
     Rescue Halsin: Level Cap 5 - goal is to rescue Halsin and return him safely to the Grove.
-    Kill Inquisitor Wwargaz: Level Cap 8 - goal is to kill Inquisitor Wwargaz in the Creche. The space laser does not count.
-    Kill Myrkul: Level Cap 10 - goal is to kill the Avatar of Myrkul at the end of Act 2.
-    Kill the Nether Brain: Level Cap 12 - goal is to kill the Nether Brain at the end of Act 3.
+    Kill Inquisitor Wwargaz: Level Cap 8 - goal is to kill Inquisitor Wwargaz in the Creche.
+        The space laser does not count. 306 locations base.
     """
-    
+    #Kill Myrkul: Level Cap 10 - goal is to kill the Avatar of Myrkul at the end of Act 2.
+    #Kill the Nether Brain: Level Cap 12 - goal is to kill the Nether Brain at the end of Act 3.
+
     display_name = "Goal"
 
     option_rescue_halsin = 0
     option_kill_inquisitor_wwargaz = 1
-    option_kill_myrkul = 2
-    option_kill_nether_brain = 3
+    #option_kill_myrkul = 2
+    #option_kill_nether_brain = 3
 
     default = option_rescue_halsin
+
+class AdditionalLevelUps(Range):
+    """
+    For an easier play through, this adds additional Level Up items into the pool. Level hard caps at 12 regardless of setting. Not recommended.
+    """
+    display_name = "Additional Level Ups"
+    range_start = 0
+    range_end = 10
+    default = 0
 
 class SyncMethod(Choice):
     """
     Determines how AP items will be delivered into BG3. All options will still have the AP Sync scroll, it just will be a No-op if not needed.
     Scroll_Tav - Items will only be generated when the scroll is cast, and placed in Tav's inventory.
     Any_action_Tav - Items will be generated when ANYBODY takes ANY action that the game considers worth triggering the listener flag for
-        (which is most things). Items will be given to the character currently being controlled. This may (will likely) cause encumbrance issues, potentially even during combat.
-    Any_action_chest - Items will be generated as any_action_tav, but items will instead spawn into the camp chest.
+        (which is most things). Items will be given to the character currently being controlled.
+        This may (will likely) cause encumbrance issues, potentially even during combat.
     """
 
     display_name = "SyncMethod"
 
     option_scroll_tav = 0
     option_any_action_tav = 1
-    option_any_action_chest = 2
 
     default = option_any_action_tav
 
@@ -78,6 +87,39 @@ class AddAct3Treasure(Toggle):
     """
     display_name = "Add Act 3 Treasure"
     default = False
+
+class KillSanity(Toggle):
+    """
+    Whether kills of individual creatures should be locations.
+    This is EXPERIMENTAL and currently only has a small subset of creatures set as valid.
+    It currently adds 159 locations.
+    """
+    display_name = "Killsanity"
+    option_off = 0
+    option_all_nonmissable_hostiles = 1
+    #option_important_hostiles = 2
+    #option_progressive_count = 3
+    default = option_off
+
+class TrapsPercentage(Range):
+    """
+    What percent of filler items should be traps. This is EXPERIMENTAL.
+    """
+    display_name = "Trap Chance"
+    range_start = 0
+    range_end = 100
+    default = 0
+
+class EnabledTraps(OptionSet):
+    """
+    Which kinds of traps should be enabled. This is EXPERIMENTAL. Currently monster spawns do not scale to level.
+    I do not know if receiving one of each trap on the Nautiloid would let you survive.
+    """
+    valid_keys = ["Monster", "Bleeding", "Stun"]
+    display_name = "Enabled Trap List"
+    default = {"Monster", "Bleeding", "Stun"}
+
+
 
 #class ObjectsAsChecks(Toggle):
 #    """
@@ -123,12 +165,16 @@ class AddAct3Treasure(Toggle):
 @dataclass
 class BG3Options(PerGameCommonOptions):
     goal: Goal
+    additional_level_ups: AdditionalLevelUps
     sync_method: SyncMethod
     trim_treasure_method: TrimTreasureMethod
     add_act1a_treasure: AddAct1ATreasure
     add_act1b_treasure: AddAct1BTreasure
     add_act2_treasure: AddAct2Treasure
     add_act3_treasure: AddAct3Treasure
+    killsanity: KillSanity
+    traps_percentage: TrapsPercentage
+    enabled_traps: EnabledTraps
 #    objects_as_checks: ObjectsAsChecks
 #    feats_as_items: FeatsAsItems
 #    stats_as_items: StatsAsItems

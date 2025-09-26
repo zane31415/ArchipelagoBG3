@@ -148,8 +148,11 @@ class BG3Context(CommonContext):
             received_items = [AP_ITEM_TO_BG3_ID[self.item_names.lookup_in_game(network_item.item)] for network_item in self.items_received]
             levelcounter = count()
             goldcounter = count()
+            trapcounter = count()
             received_items = [f"LevelUp<{next(levelcounter)}>" if item == "LevelUp" \
-                              else f"{item}-{next(goldcounter)}" if item == "Gold-000100" \
+                              else f"{item}-{next(goldcounter)}" if item[:4] == "Gold" \
+                              else f"{item}-2e51b930-c9fd-41f2-8013-02c92e990de2-{next(trapcounter)}" if item[:12] == "Trap-Monster" \
+                              else f"{item}-{next(trapcounter)}" if item[:4] == "Trap"
                               else item for item in received_items]
             path = os.path.join(self.se_bg3, self.comm_file_sent_items)
             with open(path, 'w') as f:
@@ -197,6 +200,8 @@ async def game_watcher(ctx: BG3Context):
                             victory = True
                         elif apLoc == "Victory_Wwargaz" and goal == 1:
                             victory = True
+                elif loc[:5] == "Kill-":
+                    pass # A kill that we don't track for this setting, ignore it.
                 elif loc not in bugged_locations:
                     logger.error(f"Please tell BG3 channel about {loc}- it was not handled. This probably doesn't break anything, but it should be looked at.")
                     bugged_locations.append(loc)
