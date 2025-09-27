@@ -117,10 +117,10 @@ def connect_regions(world: BG3World) -> None:
             west_act2.connect(shar_gauntlet, "West Act 2 to Gauntlet of Shar")
             moonrise.connect(mindflayer, "Moonrise Towers to Mindflayer Colony", lambda state: state.has("Level Up", world.player, 9))
 
-            if (world.options.goal != world.options.goal.option_kill_myrkul):
-                mindflayer.connect(rivington, "Mindflayer Colony to Rivington")
-                rivington.connect(wyrms_crossing, "Rivington to Wyrm's Crossing")
-                wyrms_crossing.connect(lower_city, "Wyrm's Crossing to Lower City", lambda state: state.has("Level Up", world.player, 10))
-                lower_city.connect(lower_city_sewers, "Lower City to Lower City Sewers")
-                lower_city.connect(iron_throne, "Lower City to Iron Throne")
-                lower_city.connect(netherbrain, "Lower City to Netherbrain", lambda state: state.has("Level Up", world.player, 11))
+            #if (world.options.goal != world.options.goal.option_kill_myrkul):
+            #    mindflayer.connect(rivington, "Mindflayer Colony to Rivington")
+            #    rivington.connect(wyrms_crossing, "Rivington to Wyrm's Crossing")
+            #    wyrms_crossing.connect(lower_city, "Wyrm's Crossing to Lower City", lambda state: state.has("Level Up", world.player, 10))
+            #    lower_city.connect(lower_city_sewers, "Lower City to Lower City Sewers")
+            #    lower_city.connect(iron_throne, "Lower City to Iron Throne")
+            #    lower_city.connect(netherbrain, "Lower City to Netherbrain", lambda state: state.has("Level Up", world.player, 11))

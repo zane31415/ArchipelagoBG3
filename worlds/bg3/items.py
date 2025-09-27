@@ -90,10 +90,10 @@ def create_all_items(world: BG3World) -> None:
     levelups_to_add = 4  # Base number of level ups
     if (world.options.goal == world.options.goal.option_kill_inquisitor_wwargaz):
         levelups_to_add = 7
-    elif (world.options.goal == world.options.goal.option_kill_myrkul):
-        levelups_to_add = 9
-    elif (world.options.goal == world.options.goal.option_kill_nether_brain):
-        levelups_to_add = 11
+#    elif (world.options.goal == world.options.goal.option_kill_myrkul):
+#        levelups_to_add = 9
+#    elif (world.options.goal == world.options.goal.option_kill_nether_brain):
+#        levelups_to_add = 11
 
     levelups_to_add = levelups_to_add + world.options.additional_level_ups
     itempool += [world.create_item("Level Up") for _ in range(levelups_to_add)]
