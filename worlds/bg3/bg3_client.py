@@ -27,7 +27,7 @@ from CommonClient import gui_enabled, logger, get_base_parser, ClientCommandProc
 
 wg_logger = logging.getLogger("WG")
 bugged_locations = ["Victory_Halsin", "Victory_Wwargaz"]
-goal = 0
+goal = -1
 
 class BG3ClientCommandProcessor(ClientCommandProcessor):
     def _cmd_resync(self):
