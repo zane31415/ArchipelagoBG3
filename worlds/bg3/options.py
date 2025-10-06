@@ -8,7 +8,7 @@ class Goal(Choice):
     These goals also determine how many level ups are placed in the pool-
     Rescue Halsin: Level Cap 5 - goal is to rescue Halsin and return him safely to the Grove.
     Kill Inquisitor Wwargaz: Level Cap 8 - goal is to kill Inquisitor Wwargaz in the Creche.
-        The space laser does not count. 306 locations base.
+        The space laser does not count.
     """
     #Kill Myrkul: Level Cap 10 - goal is to kill the Avatar of Myrkul at the end of Act 2.
     #Kill the Nether Brain: Level Cap 12 - goal is to kill the Nether Brain at the end of Act 3.
@@ -21,6 +21,38 @@ class Goal(Choice):
     #option_kill_nether_brain = 3
 
     default = option_rescue_halsin
+
+class KillSanity(Toggle):
+    """
+    Whether kills of individual creatures should be locations.
+    This has recently been added and may not be complete and/or may have issues with some kills.
+    Kills do _not_ count if they are done by falling damage or by being thrown into a chasm.
+    Due to the missability of some checks, it is advised to save often.
+
+    Nonmissable Hostiles Location count - Halsin: ~140, Wwargaz: ~250
+    """
+    display_name = "Killsanity"
+    option_off = 0
+    option_all_nonmissable_hostiles = 1
+    #option_important_hostiles = 2
+    #option_progressive_count = 3
+    default = option_off
+
+class QuestSanity(Toggle):
+    """
+    Whether quest updates should be locations.
+    Some locations may be buggy or missable- please tell the BG3 channel if any quest doesn't complete that you think should've.
+    Due to the nature of the branching of BG3 paths, many quests had to have choices as to what options were viable.
+    Currently the only option is "Most Content" - skill checks are not expected to be passed _unless_ future content depends on it.
+
+    Most Content Location count - Halsin: ~200, Wwargaz: ~300
+    """
+    display_name = "Questsanity"
+    option_off = 0
+    option_most_content = 1
+    #option_important_hostiles = 2
+    #option_progressive_count = 3
+    default = option_most_content
 
 class AdditionalLevelUps(Range):
     """
@@ -88,19 +120,6 @@ class AddAct3Treasure(Toggle):
     display_name = "Add Act 3 Treasure"
     default = False
 
-class KillSanity(Toggle):
-    """
-    Whether kills of individual creatures should be locations.
-    This is EXPERIMENTAL and currently only has a small subset of creatures set as valid.
-    It currently adds 159 locations.
-    """
-    display_name = "Killsanity"
-    option_off = 0
-    option_all_nonmissable_hostiles = 1
-    #option_important_hostiles = 2
-    #option_progressive_count = 3
-    default = option_off
-
 class TrapsPercentage(Range):
     """
     What percent of filler items should be traps. This is EXPERIMENTAL.
@@ -165,14 +184,15 @@ class EnabledTraps(OptionSet):
 @dataclass
 class BG3Options(PerGameCommonOptions):
     goal: Goal
-    additional_level_ups: AdditionalLevelUps
+    killsanity: KillSanity
+    questsanity: QuestSanity
     sync_method: SyncMethod
-    trim_treasure_method: TrimTreasureMethod
     add_act1a_treasure: AddAct1ATreasure
     add_act1b_treasure: AddAct1BTreasure
     add_act2_treasure: AddAct2Treasure
     add_act3_treasure: AddAct3Treasure
-    killsanity: KillSanity
+    trim_treasure_method: TrimTreasureMethod
+    additional_level_ups: AdditionalLevelUps
     traps_percentage: TrapsPercentage
     enabled_traps: EnabledTraps
 #    objects_as_checks: ObjectsAsChecks

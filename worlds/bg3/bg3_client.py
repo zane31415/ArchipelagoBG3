@@ -26,7 +26,7 @@ from CommonClient import gui_enabled, logger, get_base_parser, ClientCommandProc
     CommonContext, server_loop
 
 wg_logger = logging.getLogger("WG")
-bugged_locations = ["Victory_Halsin", "Victory_Wwargaz"]
+bugged_locations = ["Victory_Halsin", "Victory_Wwargaz", "Bad_State"]
 goal = -1
 
 class BG3ClientCommandProcessor(ClientCommandProcessor):
@@ -200,6 +200,8 @@ async def game_watcher(ctx: BG3Context):
                             victory = True
                         elif apLoc == "Victory_Wwargaz" and goal == 1:
                             victory = True
+                        elif apLoc == "Bad_State":
+                            logger.error(f"Something has happened in the game that may make some locations unreachable. Consider loading an earlier save.")
                 elif loc[:5] == "Kill-":
                     pass # A kill that we don't track for this setting, ignore it.
                 elif loc not in bugged_locations:
