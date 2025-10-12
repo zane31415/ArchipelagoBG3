@@ -13,7 +13,7 @@ FILLER_EQUIPMENT = [
     ["Lockpick", "e32a200c-5b63-414d-ae57-00e7b38f125b"],
     ["Supply Pack", "a24a2ca2-a213-424c-833d-47c79934c0ce"],
     ["Trap Disarm Pack", "22c74b5e-bef2-41b1-b9ed-f4acc766d4ee"],
-    ["Is that blood? No, nevermind.", "af808d7c-c8d6-4924-94a9-35bffd450803"],
+    ["Is that blood? No, nevermind.", "809f228e-8d2b-46b8-8a33-51181505bc61"],
     ["100 Gold", "Gold-000100"],
     ["200 Gold", "Gold-000200"],
 ]
@@ -42,6 +42,7 @@ ID_TO_ITEM_NAME = {item[2]: item[0] for item in ITEM_TUPLES}
 AP_ITEM_TO_BG3_ID = {item[0]: item[1] for item in ITEM_TUPLES}
 ID_TO_AP_ITEM = {item[2]: item[1] for item in ITEM_TUPLES}
 DEFAULT_ITEM_CLASSIFICATIONS = {item[0]: item[3] for item in ITEM_TUPLES}
+IS_DUPEABLE = {item[1]: True for item in FILLER_EQUIPMENT}
 
 # Each Item instance must correctly report the "game" it belongs to.
 # To make this simple, it is common practice to subclass the basic Item class and override the "game" field.

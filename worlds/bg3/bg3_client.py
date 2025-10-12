@@ -7,7 +7,7 @@ import asyncio
 from typing import Tuple, List, Iterable, Dict
 
 from .world import BG3World
-from .items import AP_ITEM_TO_BG3_ID
+from .items import AP_ITEM_TO_BG3_ID, IS_DUPEABLE
 from .equipment import EQUIPMENT
 from .locations import BG3_LOCATION_TO_AP_LOCATIONS, LOCATION_NAME_TO_ID
 
@@ -149,10 +149,12 @@ class BG3Context(CommonContext):
             levelcounter = count()
             goldcounter = count()
             trapcounter = count()
+            fillercounter = count()
             received_items = [f"LevelUp<{next(levelcounter)}>" if item == "LevelUp" \
                               else f"{item}-{next(goldcounter)}" if item[:4] == "Gold" \
                               else f"{item}-2e51b930-c9fd-41f2-8013-02c92e990de2-{next(trapcounter)}" if item[:12] == "Trap-Monster" \
-                              else f"{item}-{next(trapcounter)}" if item[:4] == "Trap"
+                              else f"{item}-{next(trapcounter)}" if item[:4] == "Trap" \
+                              else f"Dupe-{next(fillercounter):04}-{item}" if IS_DUPEABLE.get(item, False) \
                               else item for item in received_items]
             path = os.path.join(self.se_bg3, self.comm_file_sent_items)
             with open(path, 'w') as f:
@@ -215,7 +217,7 @@ async def game_watcher(ctx: BG3Context):
             await asyncio.sleep(3)
 
         except Exception as err:
-            logger.warn("Exception in communication thread, a check may not have been sent: " + str(err))
+            logger.error("Exception in communication thread, a check may not have been sent: " + str(err))
 
 
 def print_error_and_close(msg):
