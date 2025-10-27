@@ -88,9 +88,9 @@ def create_all_items(world: BG3World) -> None:
 
     itempool: list[Item] = []
 
-    levelups_to_add = 4  # Base number of level ups
+    levelups_to_add = 10  # Base number of level ups - enough to reach level 5
     if (world.options.goal == world.options.goal.option_kill_inquisitor_wwargaz):
-        levelups_to_add = 7
+        levelups_to_add = 22 # To reach level 8
 #    elif (world.options.goal == world.options.goal.option_kill_myrkul):
 #        levelups_to_add = 9
 #    elif (world.options.goal == world.options.goal.option_kill_nether_brain):

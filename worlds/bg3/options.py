@@ -132,11 +132,11 @@ class TrapsPercentage(Range):
 class EnabledTraps(OptionSet):
     """
     Which kinds of traps should be enabled. This is EXPERIMENTAL. Currently monster spawns do not scale to level.
-    I do not know if receiving one of each trap on the Nautiloid would let you survive.
+    Monster traps are currently broken.
     """
     valid_keys = ["Monster", "Bleeding", "Stun"]
     display_name = "Enabled Trap List"
-    default = {"Monster", "Bleeding", "Stun"}
+    default = {"Bleeding", "Stun"}
 
 
 
