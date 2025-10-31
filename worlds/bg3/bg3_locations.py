@@ -1235,7 +1235,7 @@ BG3_LOCATION_LIST = [
     ["TUT_ShadowheartEscape-FreedLeftBehind", ["Tut-SH: Find Captive"], 0],
     ["TUT_ShadowheartEscape-LeftBehind", [], 0],
     ["TUT_ShadowheartEscape-UsedForce", ["Tut-SH: Find Captive", "Tut-SH: Find the Rune", "Tut-SH: Open the Pod"], 0],
-    ["TUT_ShadowheartEscape-UsedRune", ["Tut-SH: Find Captive", "Tut-SH: Open the Pod"], 0],
+    ["TUT_ShadowheartEscape-UsedRune", ["Tut-SH: Find Captive", "Tut-SH: Find the Rune", "Tut-SH: Open the Pod"], 0],
     ["CRE_BloodOfLathander-DiscoveredGithCrest", [], 1],
     ["CRE_BloodOfLathander-DiscoveredGithCrest_Passage", [], 1],
     ["CRE_BloodOfLathander-DiscoveredGithCrest_RetrieveRelic", [], 1],
