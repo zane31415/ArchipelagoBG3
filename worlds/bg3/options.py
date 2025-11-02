@@ -60,7 +60,7 @@ class AdditionalLevelUps(Range):
     """
     display_name = "Additional Level Ups"
     range_start = 0
-    range_end = 10
+    range_end = 40
     default = 0
 
 class SyncMethod(Choice):

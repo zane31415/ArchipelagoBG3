@@ -1906,7 +1906,7 @@ BG3_LOCATION_LIST = [
     ["Kill-S_CRE_CrecheGuard02_99439816-fcaa-4167-a20a-8f3dfff4e345", ["Creche: Kill Ardent Lin'a'an"], 1],
     ["Kill-S_CRE_IntelligenceOfficer03_266e49a3-83f8-40aa-baff-5ffe2a1a35db", ["Creche: Kill Ardent Qu'th"], 1],
     ["Kill-S_CRE_IntelligenceOfficer02_a17c356a-6e0c-4d2f-bcf6-58195d6c9edf", ["Creche: Kill Ardent Vraalsith"], 1],
-    ["Kill-S_CRE_Templar_378ac93e-03a0-40b4-904c-f37989ac7a8c", ["Creche: Kill Ch'r'ai W'wargaz"], 1],
+    ["Kill-S_CRE_Templar_378ac93e-03a0-40b4-904c-f37989ac7a8c", ["Creche: Kill Ch'r'ai W'wargaz", "Victory_Wwargaz"], 1],
     ["Kill-S_CRE_CaptainsBeast02_fcd64862-67ba-4358-9636-09ff9545177a", ["Creche: Kill D'hak"], 1],
     ["Kill-S_CRE_Doctor_c04c1977-d53f-4b5c-a29d-2e8d75024768", ["Creche: Kill Ghustil Stornugoss"], 1],
     ["Kill-S_CRE_MainCheckpointMainGuard_161701af-17b7-4def-b378-5f24e95d667f", ["Creche: Kill Gish Far'aag"], 1],
