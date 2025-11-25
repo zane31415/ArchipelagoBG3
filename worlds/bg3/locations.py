@@ -141,11 +141,58 @@ def create_regular_locations(world: BG3World) -> None:
         creche_locations = get_location_names_with_ids(creche_location_names)
         creche.add_locations(creche_locations, BG3Location)
 
+        # Done with Wwargaz goal. Following additions are for other goals.
+        if (world.options.goal != world.options.goal.option_kill_inquisitor_wwargaz 
+            and world.options.goal != world.options.goal.option_act1_user_defined_fights):
+            east_act2_location_names = []
+            for loc in LOCATION_NAME_ID_REGION:
+                if (loc[2] == 'east_act2' and ((loc[1] < 10000 and world.options.questsanity == 1) or (loc[1] >= 10000 and world.options.killsanity == 1))):
+                    east_act2_location_names.append(loc[0])
+            east_act2_location = get_location_names_with_ids(east_act2_location_names)
+            east_act2.add_locations(east_act2_location, BG3Location)
+
+            west_act2_location_names = []
+            for loc in LOCATION_NAME_ID_REGION:
+                if (loc[2] == 'west_act2' and ((loc[1] < 10000 and world.options.questsanity == 1) or (loc[1] >= 10000 and world.options.killsanity == 1))):
+                    west_act2_location_names.append(loc[0])
+            west_act2_location = get_location_names_with_ids(west_act2_location_names)
+            west_act2.add_locations(west_act2_location, BG3Location)
+
+            last_light_location_names = []
+            for loc in LOCATION_NAME_ID_REGION:
+                if (loc[2] == 'last_light' and ((loc[1] < 10000 and world.options.questsanity == 1) or (loc[1] >= 10000 and world.options.killsanity == 1))):
+                    last_light_location_names.append(loc[0])
+            last_light_locations = get_location_names_with_ids(last_light_location_names)
+            last_light.add_locations(last_light_locations, BG3Location)
+
+            shar_gauntlet_location_names = []
+            for loc in LOCATION_NAME_ID_REGION:
+                if (loc[2] == 'shar_gauntlet' and ((loc[1] < 10000 and world.options.questsanity == 1) or (loc[1] >= 10000 and world.options.killsanity == 1))):
+                    shar_gauntlet_location_names.append(loc[0])
+            shar_gauntlet_locations = get_location_names_with_ids(shar_gauntlet_location_names)
+            shar_gauntlet.add_locations(shar_gauntlet_locations, BG3Location)
+
+            moonrise_location_names = []
+            for loc in LOCATION_NAME_ID_REGION:
+                if (loc[2] == 'moonrise' and ((loc[1] < 10000 and world.options.questsanity == 1) or (loc[1] >= 10000 and world.options.killsanity == 1))):
+                    moonrise_location_names.append(loc[0])
+            moonrise_locations = get_location_names_with_ids(moonrise_location_names)
+            moonrise.add_locations(moonrise_locations, BG3Location)
+
+            mindflayer_location_names = []
+            for loc in LOCATION_NAME_ID_REGION:
+                if (loc[2] == 'mindflayer' and ((loc[1] < 10000 and world.options.questsanity == 1) or (loc[1] >= 10000 and world.options.killsanity == 1))):
+                    mindflayer_location_names.append(loc[0])
+            mindflayer_locations = get_location_names_with_ids(mindflayer_location_names)
+            mindflayer.add_locations(mindflayer_locations, BG3Location)
+
+
+
     if (world.options.goal == world.options.goal.option_rescue_halsin):
         goblin_camp.add_event("Victory_Halsin", "Victory", location_type=BG3Location, item_type=items.BG3Item)
     elif (world.options.goal == world.options.goal.option_kill_inquisitor_wwargaz):
         creche.add_event("Victory_Wwargaz", "Victory", location_type=BG3Location, item_type=items.BG3Item)
-    #elif (world.options.goal == world.options.goal.option_kill_myrkul):
-    #    mindflayer.add_event("Victory_Myrkul", "Victory", location_type=BG3Location, item_type=items.BG3Item)
-    #else:
-    #    netherbrain.add_event("Victory_Netherbrain", "Victory", location_type=BG3Location, item_type=items.BG3Item)
+    elif (world.options.goal == world.options.goal.option_act1_user_defined_fights or world.options.goal == world.options.goal.option_act2_user_defined_fights):
+        creche.add_event("Victory_All_Bosses", "Victory", location_type=BG3Location, item_type=items.BG3Item)
+    elif (world.options.goal == world.options.goal.option_kill_myrkul):
+        mindflayer.add_event("Victory_Myrkul", "Victory", location_type=BG3Location, item_type=items.BG3Item)

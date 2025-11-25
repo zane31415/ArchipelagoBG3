@@ -93,34 +93,35 @@ def connect_regions(world: BG3World) -> None:
     iron_throne = world.get_region("Iron Throne")
     netherbrain = world.get_region("Netherbrain")
 
-    tutorial.connect(beach, "Tutorial to Beach", lambda state: state.has("Level Up", world.player)) # Level 2
+    tutorial.connect(beach, "Tutorial to Beach", lambda state: state.has("Level Fragment", world.player)) # Level 2
     beach.connect(crypt, "Beach to Crypt")
-    beach.connect(grove, "Beach to Grove", lambda state: state.has("Level Up", world.player, 3)) # Level 3
-    beach.connect(blighted_village, "Beach to Blighted Village", lambda state: state.has("Level Up", world.player, 3)) # Level 3
-    blighted_village.connect(goblin_camp, "Blighted Village to Goblin Camp", lambda state: state.has("Level Up", world.player, 8)) # Level 4.5
-    blighted_village.connect(hag, "Blighted Village to Hag", lambda state: state.has("Level Up", world.player, 10)) # Level 5
-    blighted_village.connect(waukeen, "Blighted Village to Waukeen", lambda state: state.has("Level Up", world.player, 6)) # Level 4
+    beach.connect(grove, "Beach to Grove", lambda state: state.has("Level Fragment", world.player, 3)) # Level 3
+    beach.connect(blighted_village, "Beach to Blighted Village", lambda state: state.has("Level Fragment", world.player, 3)) # Level 3
+    blighted_village.connect(goblin_camp, "Blighted Village to Goblin Camp", lambda state: state.has("Level Fragment", world.player, 8)) # Level 4.5
+    blighted_village.connect(hag, "Blighted Village to Hag", lambda state: state.has("Level Fragment", world.player, 10)) # Level 5
+    blighted_village.connect(waukeen, "Blighted Village to Waukeen", lambda state: state.has("Level Fragment", world.player, 6)) # Level 4
 
     if (world.options.goal != world.options.goal.option_rescue_halsin):
-        goblin_camp.connect(underdark, "Goblin Camp to Underdark")
-        underdark.connect(grymforge, "Underdark to Grymforge", lambda state: state.has("Level Up", world.player, 14)) # Level 6
-        blighted_village.connect(underdark, "Blighted Village to Underdark", lambda state: state.has("Level Up", world.player, 10)) # Level 5
-        blighted_village.connect(monastery, "Blighted Village to Monastery", lambda state: state.has("Level Up", world.player, 18)) # Level 7
+        goblin_camp.connect(underdark, "Goblin Camp to Underdark", lambda state: state.has("Level Fragment", world.player, 10)) # Level 5
+        underdark.connect(grymforge, "Underdark to Grymforge", lambda state: state.has("Level Fragment", world.player, 14)) # Level 6
+        blighted_village.connect(underdark, "Blighted Village to Underdark", lambda state: state.has("Level Fragment", world.player, 10)) # Level 5
+        blighted_village.connect(monastery, "Blighted Village to Monastery", lambda state: state.has("Level Fragment", world.player, 18)) # Level 7
         monastery.connect(creche, "Monastery to Creche")
 
-        if (world.options.goal != world.options.goal.option_kill_inquisitor_wwargaz):
-            monastery.connect(east_act2, "Monastery to East Act 2", lambda state: state.has("Level Up", world.player, 22)) # Level 8
-            grymforge.connect(east_act2, "Grymforge to East Act 2", lambda state: state.has("Level Up", world.player, 22)) # Level 8
-            east_act2.connect(west_act2, "East Act 2 to West Act 2", lambda state: state.has("Level Up", world.player, 26)) # Level 9
-            east_act2.connect(last_light, "East Act 2 to Last Light Inn")
+        if (world.options.goal != world.options.goal.option_kill_inquisitor_wwargaz 
+            and world.options.goal != world.options.goal.option_act1_user_defined_fights):
+            monastery.connect(east_act2, "Monastery to East Act 2", lambda state: state.has("Level Fragment", world.player, 22)) # Level 8
+            grymforge.connect(east_act2, "Grymforge to East Act 2", lambda state: state.has("Level Fragment", world.player, 22)) # Level 8
+            east_act2.connect(west_act2, "East Act 2 to West Act 2", lambda state: state.has("Level Fragment", world.player, 26)) # Level 9
+            east_act2.connect(last_light, "East Act 2 to Last Light Inn", lambda state: state.has("Level Fragment", world.player, 26)) # Level 9
             west_act2.connect(moonrise, "West Act 2 to Moonrise Towers")
             west_act2.connect(shar_gauntlet, "West Act 2 to Gauntlet of Shar")
-            moonrise.connect(mindflayer, "Moonrise Towers to Mindflayer Colony", lambda state: state.has("Level Up", world.player, 30)) # Level 10
+            moonrise.connect(mindflayer, "Moonrise Towers to Mindflayer Colony", lambda state: state.has("Level Fragment", world.player, 30)) # Level 10
 
             #if (world.options.goal != world.options.goal.option_kill_myrkul):
             #    mindflayer.connect(rivington, "Mindflayer Colony to Rivington")
             #    rivington.connect(wyrms_crossing, "Rivington to Wyrm's Crossing")
-            #    wyrms_crossing.connect(lower_city, "Wyrm's Crossing to Lower City", lambda state: state.has("Level Up", world.player, 10))
+            #    wyrms_crossing.connect(lower_city, "Wyrm's Crossing to Lower City", lambda state: state.has("Level Fragment", world.player, 10))
             #    lower_city.connect(lower_city_sewers, "Lower City to Lower City Sewers")
             #    lower_city.connect(iron_throne, "Lower City to Iron Throne")
-            #    lower_city.connect(netherbrain, "Lower City to Netherbrain", lambda state: state.has("Level Up", world.player, 11))
+            #    lower_city.connect(netherbrain, "Lower City to Netherbrain", lambda state: state.has("Level Fragment", world.player, 11))

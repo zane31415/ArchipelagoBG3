@@ -26,8 +26,30 @@ from CommonClient import gui_enabled, logger, get_base_parser, ClientCommandProc
     CommonContext, server_loop
 
 wg_logger = logging.getLogger("WG")
-bugged_locations = ["Victory_Halsin", "Victory_Wwargaz", "Bad_State"]
+bugged_locations = ["Victory_Halsin", "Victory_Wwargaz", "Victory_Myrkul", "Bad_State"]
+act1bosses = ["Victory_Halsin", "Hag: Kill Auntie Ethel", "Village: Kill Well Spider Queen", "Underdark: Kill Spectator", "Underdark: Kill Bulette", "Grym: Kill Nere", "Forge: Kill Grym", "Victory_Wwargaz"]
+act2bosses = ["East Act 2: Kill Shambling Mound", "Reithwin: Kill Cursed Kuo-Toa Chief", "HoH: Kill Malus Thorm", "Tollhouse: Kill Gerringothe Thorm", "Brewery: Kill Thisobald Thorm", "Reithwin: Kill Ch'r'ai Tska'an", "Shar: Kill Yurgir", "Shar: Kill Balthazar", "Victory_Myrkul"]
+goalbosses = act1bosses + act2bosses
 goal = -1
+bossmap = {
+    "Auntie Ethel": "Hag: Kill Auntie Ethel",
+    "Spider Queen": "Village: Kill Well Spider Queen",
+    "Spectator": "Underdark: Kill Spectator",
+    "Bulette": "Underdark: Kill Bulette",
+    "Nere": "Grym: Kill Nere",
+    "Grym": "Forge: Kill Grym",
+    "Ch'r'ai W'wargaz": "Creche: Kill Ch'r'ai W'wargaz",
+
+    "Shambling Mound": "East Act 2: Kill Shambling Mound",
+    "Cursed Kuo-Toa Chief": "Reithwin: Kill Cursed Kuo-Toa Chief",
+    "Malus Thorm": "HoH: Kill Malus Thorm",
+    "Gerringothe Thorm": "Tollhouse: Kill Gerringothe Thorm",
+    "Thisobald Thorm": "Brewery: Kill Thisobald Thorm",
+    "Ch'r'ai Tska'an": "Reithwin: Kill Ch'r'ai Tska'an",
+    "Yurgir": "Shar: Kill Yurgir",
+    "Balthazar": "Shar: Kill Balthazar",
+    "Myrkul": "Colony Showdown: Kill Myrkul"
+}
 
 class BG3ClientCommandProcessor(ClientCommandProcessor):
     def _cmd_resync(self):
@@ -131,6 +153,16 @@ class BG3Context(CommonContext):
             slot_data = args["slot_data"]
             global goal
             goal = slot_data["goal"]
+            if (goal == 2 or goal ==4):
+                global user_defined_fights
+                global goalbosses
+                user_defined_fights = slot_data["user_defined_fights"]
+                user_selected_fight_values = set()
+                for key in user_defined_fights:
+                    if key in bossmap:
+                        user_selected_fight_values.add(bossmap[key])
+                goalbosses = [boss for boss in goalbosses if boss in user_selected_fight_values]
+                logger.error(f"Expected bosses to defeat for goal: {goalbosses}")
             sync_option_path = os.path.join(self.se_bg3, self.sync_option)
             with open(sync_option_path, 'w') as f:
                 json.dump(slot_data, f)
@@ -189,31 +221,57 @@ async def game_watcher(ctx: BG3Context):
             else:
                 with open(path, 'w') as f:
                     f.write("[]")
-            for loc in bg3LocationsToSend:
-                if loc in BG3_LOCATION_TO_AP_LOCATIONS:
-                    for apLoc in BG3_LOCATION_TO_AP_LOCATIONS[loc]:
-                        if apLoc not in ctx.checked_locations and apLoc in LOCATION_NAME_TO_ID:
-                            sending = sending + [LOCATION_NAME_TO_ID[apLoc]]
-                            ctx.checked_locations.add(LOCATION_NAME_TO_ID[apLoc])
-                        if apLoc not in LOCATION_NAME_TO_ID and apLoc not in bugged_locations:
-                            logger.error(f"BUG: Please tell BG3 channel that {apLoc} is a typo and needs fixing. This location may need a server send_location to fix this run.")
-                            bugged_locations.append(apLoc)
-                        if apLoc == "Victory_Halsin" and goal == 0:
-                            victory = True
-                        elif apLoc == "Victory_Wwargaz" and goal == 1:
-                            victory = True
-                        elif apLoc == "Bad_State":
-                            logger.error(f"Something has happened in the game that may make some locations unreachable. Consider loading an earlier save.")
-                elif loc[:5] == "Kill-":
-                    pass # A kill that we don't track for this setting, ignore it.
-                elif loc not in bugged_locations:
-                    logger.error(f"Please tell BG3 channel about {loc}- it was not handled. This probably doesn't break anything, but it should be looked at.")
-                    bugged_locations.append(loc)
-            message = [{"cmd": 'LocationChecks', "locations": sending}]
-            await ctx.send_msgs(message)
-            if not ctx.finished_game and victory:
-                await ctx.send_msgs([{"cmd": "StatusUpdate", "status": ClientStatus.CLIENT_GOAL}])
-                ctx.finished_game = True
+            if goal != -1:
+                global goalbosses
+                if goal not in [0,1,2,3,4]:
+                    logger.error(f"Your version of the apworld is not compatible with server's version. Please update your apworld and try again.")
+                    logger.error(goal)
+                for loc in bg3LocationsToSend:
+                    if loc in BG3_LOCATION_TO_AP_LOCATIONS:
+                        for apLoc in BG3_LOCATION_TO_AP_LOCATIONS[loc]:
+                            if apLoc not in ctx.checked_locations and apLoc in LOCATION_NAME_TO_ID:
+                                sending = sending + [LOCATION_NAME_TO_ID[apLoc]]
+                                ctx.checked_locations.add(LOCATION_NAME_TO_ID[apLoc])
+                            if apLoc not in LOCATION_NAME_TO_ID and apLoc not in bugged_locations:
+                                logger.error(f"BUG: Please tell BG3 channel that {apLoc} is a typo and needs fixing. This location may need a server send_location to fix this run.")
+                                bugged_locations.append(apLoc)
+                            if apLoc == "Victory_Halsin" and goal == 0:
+                                victory = True
+                            elif apLoc == "Victory_Wwargaz" and goal == 1:
+                                victory = True
+                            elif apLoc == "Victory_Myrkul" and goal == 3:
+                                victory = True
+                            elif (apLoc not in ctx.checked_locations) and (apLoc in goalbosses) and (goal == 2 or goal == 4):
+                                remaining_bosses = [
+                                    boss for boss in goalbosses 
+                                    if LOCATION_NAME_TO_ID[boss] not in ctx.checked_locations
+                                ]
+                                if not remaining_bosses:
+                                    victory = True
+                                else:
+                                    goalbosses = remaining_bosses
+                                    logger.error(f"Remaining bosses to defeat for goal: {goalbosses}")
+                            elif apLoc == "Bad_State":
+                                logger.error(f"Something has happened in the game that may make some locations unreachable. Consider loading an earlier save.")
+                    elif loc[:5] == "Kill-":
+                        pass # A kill that we don't track for this setting, ignore it.
+                    elif loc not in bugged_locations:
+                        logger.error(f"Please tell BG3 channel about {loc}- it was not handled. This probably doesn't break anything, but it should be looked at.")
+                        bugged_locations.append(loc)
+                if goal == 2 or goal ==4:
+                    remaining_bosses = [
+                        boss for boss in goalbosses 
+                        if LOCATION_NAME_TO_ID[boss] not in ctx.checked_locations
+                    ]
+                    if not remaining_bosses:
+                        victory = True
+                    goalbosses = remaining_bosses
+
+                message = [{"cmd": 'LocationChecks', "locations": sending}]
+                await ctx.send_msgs(message)
+                if not ctx.finished_game and victory:
+                    await ctx.send_msgs([{"cmd": "StatusUpdate", "status": ClientStatus.CLIENT_GOAL}])
+                    ctx.finished_game = True
             await asyncio.sleep(3)
 
         except Exception as err:

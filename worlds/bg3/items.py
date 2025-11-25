@@ -27,7 +27,7 @@ TRAP_OPTIONS = [
 #[game item name, id in BG3, int id in AP, classification, filter level]
 # Filter levels: 0 (pre-Halsin), 1 (Act 1), 2 (Act 2), 3 (Act 3)
 ITEM_TUPLES = [
-    ["Level Up", "LevelUp", 1, ItemClassification.progression, 0],
+    ["Level Fragment", "LevelUp", 1, ItemClassification.progression, 0],
     ["Boots of Speed", "8b22d15a-85bb-4c8d-90cf-a773fc451eac", 2, ItemClassification.progression, 1],
     ["Shadow Lantern", "c9ebcfae-8c9a-4acc-8a30-da7830b32121", 3, ItemClassification.progression, 2],
     ["Spear of Night", "d590884d-55a2-4136-9777-531ee7d53f7e", 4, ItemClassification.progression, 2],
@@ -89,15 +89,15 @@ def create_all_items(world: BG3World) -> None:
     itempool: list[Item] = []
 
     levelups_to_add = 10  # Base number of level ups - enough to reach level 5
-    if (world.options.goal == world.options.goal.option_kill_inquisitor_wwargaz):
+    if (world.options.goal == world.options.goal.option_kill_inquisitor_wwargaz or world.options.goal == world.options.goal.option_act1_user_defined_fights):
         levelups_to_add = 22 # To reach level 8
-#    elif (world.options.goal == world.options.goal.option_kill_myrkul):
-#        levelups_to_add = 9
+    elif (world.options.goal == world.options.goal.option_kill_myrkul or world.options.goal == world.options.goal.option_act2_user_defined_fights):
+        levelups_to_add = 30 # To reach level 10
 #    elif (world.options.goal == world.options.goal.option_kill_nether_brain):
-#        levelups_to_add = 11
+#        levelups_to_add = 38 # To reach level 12
 
     levelups_to_add = levelups_to_add + world.options.additional_level_ups
-    itempool += [world.create_item("Level Up") for _ in range(levelups_to_add)]
+    itempool += [world.create_item("Level Fragment") for _ in range(levelups_to_add)]
     # Here we would add other progression items as we have them.
 
     # Add Treasure

@@ -9,31 +9,79 @@ class Goal(Choice):
     Rescue Halsin: Level Cap 5 - goal is to rescue Halsin and return him safely to the Grove.
     Kill Inquisitor Wwargaz: Level Cap 8 - goal is to kill Inquisitor Wwargaz in the Creche.
         The space laser does not count.
+    Act 1 user defined fights: Level Cap 8 - goal is to defeat selected bosses (see UserDefinedFights). Currently requires Killsanity On.
+    Kill Myrkul: Level Cap 10 - goal is to kill the Avatar of Myrkul at the end of Act 2.
+    Act 2 user defined fights: Level Cap 10 - goal is to defeat selected bosses (see UserDefinedFights). Currently requires Killsanity On.
     """
-    #Kill Myrkul: Level Cap 10 - goal is to kill the Avatar of Myrkul at the end of Act 2.
     #Kill the Nether Brain: Level Cap 12 - goal is to kill the Nether Brain at the end of Act 3.
 
     display_name = "Goal"
 
     option_rescue_halsin = 0
     option_kill_inquisitor_wwargaz = 1
-    #option_kill_myrkul = 2
+    option_act1_user_defined_fights = 2
+    option_kill_myrkul = 3
+    option_act2_user_defined_fights = 4
     #option_kill_nether_brain = 3
 
     default = option_rescue_halsin
 
+class UserDefinedFights(OptionSet):
+    """
+    If using a User Defined Fights goal, select which fights are required to complete the goal.
+    Act 2 fights require the act2_user_defined_fights goal to be selected.
+    """
+    valid_keys = [
+        "Auntie Ethel",
+        "Spider Queen",
+        "Spectator",
+        "Bulette",
+        "Nere",
+        "Grym",
+        "Ch'r'ai W'wargaz",
+        "Shambling Mound",
+        "Cursed Kuo-Toa Chief",
+        "Malus Thorm",
+        "Gerringothe Thorm",
+        "Thisobald Thorm",
+        "Ch'r'ai Tska'an",
+        "Yurgir",
+        "Balthazar",
+        "Myrkul"
+    ]
+    display_name = "User Defined Fights"
+    default = {"Auntie Ethel",
+        "Spider Queen",
+        "Spectator",
+        "Bulette",
+        "Nere",
+        "Grym",
+        "Ch'r'ai W'wargaz",
+        "Shambling Mound",
+        "Cursed Kuo-Toa Chief",
+        "Malus Thorm",
+        "Gerringothe Thorm",
+        "Thisobald Thorm",
+        "Ch'r'ai Tska'an",
+        "Yurgir",
+        "Balthazar",
+        "Myrkul"}
+
 class KillSanity(Toggle):
     """
     Whether kills of individual creatures should be locations.
-    This has recently been added and may not be complete and/or may have issues with some kills.
     Kills do _not_ count if they are done by falling damage or by being thrown into a chasm.
-    Due to the missability of some checks, it is advised to save often.
+    
+    All_Nonmissible_hostiles: The intent was all monsters that are either default or story-forced hostile, and are not likely to be missed by advancing plot.
+    Include_Missible_Bosses: Includes bosses that could be bypassed or missed. Failing to kill one could softlock the player. Save often.
+        Examples: Nere, All the Thorms, later waves of Thaniel's summons.
 
     Nonmissable Hostiles Location count - Halsin: ~140, Wwargaz: ~250
     """
     display_name = "Killsanity"
     option_off = 0
     option_all_nonmissable_hostiles = 1
+    #option_include_missible_bosses = 2
     #option_important_hostiles = 2
     #option_progressive_count = 3
     default = option_off
@@ -56,11 +104,11 @@ class QuestSanity(Toggle):
 
 class AdditionalLevelUps(Range):
     """
-    For an easier play through, this adds additional Level Up items into the pool. Level hard caps at 12 regardless of setting. Not recommended.
+    For an easier play through, this adds items to support additional levels into the pool. Not recommended.
     """
     display_name = "Additional Level Ups"
     range_start = 0
-    range_end = 40
+    range_end = 10
     default = 0
 
 class SyncMethod(Choice):
@@ -184,6 +232,7 @@ class EnabledTraps(OptionSet):
 @dataclass
 class BG3Options(PerGameCommonOptions):
     goal: Goal
+    user_defined_fights: UserDefinedFights
     killsanity: KillSanity
     questsanity: QuestSanity
     sync_method: SyncMethod
