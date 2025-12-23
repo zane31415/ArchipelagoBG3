@@ -5,6 +5,7 @@ EQUIPMENT = [
     ["Amulet of Restoration", "b648ee98-f648-411b-be7e-6c50ca9b463c", 3],
     ["Amulet of the Drunkard", "b6510e39-54fc-45fa-a49e-e7d8cbfdafe6", 3],
     ["Amulet of the Harpers", "ddc9ac0b-8e68-422b-8d9d-c081629ab4ad", 2],
+    ["Returning Pike", "1047ac9f-7860-44fd-9154-0f06fe64936c", 1],
     ["Champion's Chain", "f6963e1e-b95a-496d-9d57-d4ad79a4394c", 1],
     ["Chancer's Carcanet", "49c2d3d1-f489-4433-8f9a-bdef766ee9f1", 3],
     ["Envoy's Amulet", "5556b0c1-5b0a-47f9-8bc6-91c8f293f83e", 1],

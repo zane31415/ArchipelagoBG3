@@ -27,6 +27,7 @@ from CommonClient import gui_enabled, logger, get_base_parser, ClientCommandProc
 
 wg_logger = logging.getLogger("WG")
 bugged_locations = ["Victory_Halsin", "Victory_Wwargaz", "Victory_Myrkul", "Bad_State"]
+bad_states = []
 act1bosses = ["Victory_Halsin", "Hag: Kill Auntie Ethel", "Village: Kill Well Spider Queen", "Underdark: Kill Spectator", "Underdark: Kill Bulette", "Grym: Kill Nere", "Forge: Kill Grym", "Victory_Wwargaz"]
 act2bosses = ["East Act 2: Kill Shambling Mound", "Reithwin: Kill Cursed Kuo-Toa Chief", "HoH: Kill Malus Thorm", "Tollhouse: Kill Gerringothe Thorm", "Brewery: Kill Thisobald Thorm", "Reithwin: Kill Ch'r'ai Tska'an", "Shar: Kill Yurgir", "Shar: Kill Balthazar", "Victory_Myrkul"]
 goalbosses = act1bosses + act2bosses
@@ -251,8 +252,9 @@ async def game_watcher(ctx: BG3Context):
                                 else:
                                     goalbosses = remaining_bosses
                                     logger.error(f"Remaining bosses to defeat for goal: {goalbosses}")
-                            elif apLoc == "Bad_State":
+                            elif apLoc == "Bad_State" and loc not in bad_states:
                                 logger.error(f"Something has happened in the game that may make some locations unreachable. Consider loading an earlier save.")
+                                bad_states.append(loc)
                     elif loc[:5] == "Kill-":
                         pass # A kill that we don't track for this setting, ignore it.
                     elif loc not in bugged_locations:
