@@ -14,6 +14,6 @@ class BG3Settings(settings.Group):
             messagebox("BG3 folder not found",
                        "BG3Client couldn't detect a path to the BG3 folder.\n"
                        "Please select the BG3 install folder. It should look something like AppData/Local/Larian Studios/Baldur's Gate 3/.")
-            super().browse(**kwargs)
+            return super().browse(**kwargs)
 
     root_directory: RootDirectory = RootDirectory(os.path.join("%LOCALAPPDATA%", "Larian Studios", "Baldur's Gate 3"))
