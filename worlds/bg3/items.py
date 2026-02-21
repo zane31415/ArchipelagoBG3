@@ -16,12 +16,17 @@ FILLER_EQUIPMENT = [
     ["Is that blood? No, nevermind.", "809f228e-8d2b-46b8-8a33-51181505bc61"],
     ["100 Gold", "Gold-000100"],
     ["200 Gold", "Gold-000200"],
+    ["Potion of Healing", "d47006e9-8a51-453d-b200-9e0d42e9bbab"],
 ]
 
 TRAP_OPTIONS = [
     ["Monster Spawn Trap", "Trap-Monster"],
     ["Bleeding Trap", "Trap-Bleeding"],
-    ["Stunned Trap", "Trap-Stun"]
+    ["Stunned Trap", "Trap-Stun"],
+    ["Confusion Trap", "Trap-Confusion"],
+    ["Sussur Trap", "Trap-Sussur"],
+    ["Clown Trap", "Trap-Clown"],
+    ["Overburdened Trap", "Trap-Overburdened"]
 ]
 
 #[game item name, id in BG3, int id in AP, classification, filter level]
@@ -68,6 +73,14 @@ def get_random_filler_item_name(world: BG3World) -> str:
             return TRAP_OPTIONS[1][0]
         if (trap == "Stun"):
             return TRAP_OPTIONS[2][0]
+        if (trap == "Confusion"):
+            return TRAP_OPTIONS[3][0]
+        if (trap == "Sussur"):
+            return TRAP_OPTIONS[4][0]
+        if (trap == "Clown"):
+            return TRAP_OPTIONS[5][0]
+        if (trap == "Overburdened"):
+            return TRAP_OPTIONS[6][0]
     index = world.random.randint(0, len(FILLER_EQUIPMENT) - 1)
     return FILLER_EQUIPMENT[index][0]
 

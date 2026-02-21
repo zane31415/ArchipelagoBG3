@@ -4,14 +4,14 @@ from Options import Choice, OptionGroup, PerGameCommonOptions, Range, Toggle, Op
 
 class Goal(Choice):
     """
-    Determines what location counts as victory. Currently only Act 1 goals are supported.
+    Determines what location counts as victory.
     These goals also determine how many level ups are placed in the pool-
     Rescue Halsin: Level Cap 5 - goal is to rescue Halsin and return him safely to the Grove.
     Kill Inquisitor Wwargaz: Level Cap 8 - goal is to kill Inquisitor Wwargaz in the Creche.
         The space laser does not count.
-    Act 1 user defined fights: Level Cap 8 - goal is to defeat selected bosses (see UserDefinedFights). Currently requires Killsanity On.
+    Act 1 user defined fights: Level Cap 8 - goal is to defeat selected bosses (see UserDefinedFights).
     Kill Myrkul: Level Cap 10 - goal is to kill the Avatar of Myrkul at the end of Act 2.
-    Act 2 user defined fights: Level Cap 10 - goal is to defeat selected bosses (see UserDefinedFights). Currently requires Killsanity On.
+    Act 2 user defined fights: Level Cap 10 - goal is to defeat selected bosses (see UserDefinedFights).
     """
     #Kill the Nether Brain: Level Cap 12 - goal is to kill the Nether Brain at the end of Act 3.
 
@@ -138,7 +138,7 @@ class TrimTreasureMethod(Choice):
     display_name = "Trim Treasure Method"
     option_remove_later_treasure_first = 0
     option_remove_random_treasure = 1
-    default = option_remove_random_treasure
+    default = option_remove_later_treasure_first
 
 class AddAct1ATreasure(Toggle):
     """
@@ -170,7 +170,7 @@ class AddAct3Treasure(Toggle):
 
 class TrapsPercentage(Range):
     """
-    What percent of filler items should be traps. This is EXPERIMENTAL.
+    What percent of filler items should be traps.
     """
     display_name = "Trap Chance"
     range_start = 0
@@ -179,12 +179,12 @@ class TrapsPercentage(Range):
 
 class EnabledTraps(OptionSet):
     """
-    Which kinds of traps should be enabled. This is EXPERIMENTAL. Currently monster spawns do not scale to level.
-    Monster traps are currently broken.
+    Which kinds of traps should be enabled. Currently monster spawns do not scale to level.
+    Any trap not enabled by default is experimental and may be buggy.
     """
-    valid_keys = ["Monster", "Bleeding", "Stun"]
+    valid_keys = ["Monster", "Bleeding", "Stun", "Confusion", "Sussur", "Clown", "Overburdened"]
     display_name = "Enabled Trap List"
-    default = {"Bleeding", "Stun"}
+    default = {"Monster", "Bleeding", "Stun"}
 
 
 

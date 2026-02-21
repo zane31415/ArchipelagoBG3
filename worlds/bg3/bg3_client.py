@@ -258,9 +258,9 @@ async def game_watcher(ctx: BG3Context):
                     elif loc[:5] == "Kill-":
                         pass # A kill that we don't track for this setting, ignore it.
                     elif loc not in bugged_locations:
-                        logger.error(f"Please tell BG3 channel about {loc}- it was not handled. This probably doesn't break anything, but it should be looked at.")
+                        # logger.error(f"Please tell BG3 channel about {loc}- it was not handled. This probably doesn't break anything, but it should be looked at.")
                         bugged_locations.append(loc)
-                if goal == 2 or goal ==4:
+                if goal == 2 or goal == 4:
                     remaining_bosses = [
                         boss for boss in goalbosses 
                         if LOCATION_NAME_TO_ID[boss] not in ctx.checked_locations
