@@ -385,7 +385,7 @@ EQUIPMENT = [
     ["Shield of Devotion", "a0bc3295-c01d-405e-8396-e0fa7e1e5340", 2],
     ["Shield of the Undevout", "b3571443-403b-431b-b4ba-3d943a500f4b", 3],
     ["Swires' Sledboard", "1cee750f-79c6-4109-8272-d27b97ef02df", 3],
-    ["Viconia's Walking Fortress", "4f313dde-14bb-43a2-abdd-07b2eb38b33a", 3]
+    ["Viconia's Walking Fortress", "4f313dde-14bb-43a2-abdd-07b2eb38b33a", 3],
     
     ["Psychic spark","4a9f0479-954f-486c-9534-d7d72c11f919",1],
     ["Spineshudder amulet","203321f7-74f6-428c-90be-5d8b12da23ec",2],

@@ -93,12 +93,50 @@ def connect_regions(world: BG3World) -> None:
     iron_throne = world.get_region("Iron Throne")
     netherbrain = world.get_region("Netherbrain")
 
+    stats_per_goal = 4 / world.options.statsanity_boost_by
+
     tutorial.connect(beach, "Tutorial to Beach", lambda state: state.has("Level Fragment", world.player)) # Level 2
     beach.connect(crypt, "Beach to Crypt")
     beach.connect(grove, "Beach to Grove", lambda state: state.has("Level Fragment", world.player, 3)) # Level 3
     beach.connect(blighted_village, "Beach to Blighted Village", lambda state: state.has("Level Fragment", world.player, 3)) # Level 3
     blighted_village.connect(goblin_camp, "Blighted Village to Goblin Camp", lambda state: state.has("Level Fragment", world.player, 8)) # Level 4.5
-    blighted_village.connect(hag, "Blighted Village to Hag", lambda state: state.has("Level Fragment", world.player, 10)) # Level 5
+    if (world.options.statsanity == world.options.statsanity.option_off):
+        blighted_village.connect(hag, "Blighted Village to Hag", lambda state: state.has("Level Fragment", world.player, 10)) # Level 5
+    elif (world.options.statsanity == world.options.statsanity.option_tav_only_stats or world.options.statsanity == world.options.statsanity.option_universal_stats):
+        blighted_village.connect(hag, "Blighted Village to Hag", lambda state: state.has("Level Fragment", world.player, 10) \
+                                and state.has("Strength Stat Boost", world.player, 4 / world.options.statsanity_boost_by) \
+                                and state.has("Dexterity Stat Boost", world.player, 4 / world.options.statsanity_boost_by) \
+                                and state.has("Constitution Stat Boost", world.player, 4 / world.options.statsanity_boost_by) \
+                                and state.has("Intelligence Stat Boost", world.player, 4 / world.options.statsanity_boost_by) \
+                                and state.has("Wisdom Stat Boost", world.player, 4 / world.options.statsanity_boost_by) \
+                                and state.has("Charisma Stat Boost", world.player, 4 / world.options.statsanity_boost_by)) # Level 5
+    elif (world.options.statsanity == world.options.statsanity.option_party_slots):
+        blighted_village.connect(hag, "Blighted Village to Hag", lambda state: state.has("Level Fragment", world.player, 10) \
+                                and state.has("Slot 1 Strength Stat Boost", world.player, 4 / world.options.statsanity_boost_by) \
+                                and state.has("Slot 1 Dexterity Stat Boost", world.player, 4 / world.options.statsanity_boost_by) \
+                                and state.has("Slot 1 Constitution Stat Boost", world.player, 4 / world.options.statsanity_boost_by) \
+                                and state.has("Slot 1 Intelligence Stat Boost", world.player, 4 / world.options.statsanity_boost_by) \
+                                and state.has("Slot 1 Wisdom Stat Boost", world.player, 4 / world.options.statsanity_boost_by) \
+                                and state.has("Slot 1 Charisma Stat Boost", world.player, 4 / world.options.statsanity_boost_by) \
+                                and state.has("Slot 2 Strength Stat Boost", world.player, 4 / world.options.statsanity_boost_by) \
+                                and state.has("Slot 2 Dexterity Stat Boost", world.player, 4 / world.options.statsanity_boost_by) \
+                                and state.has("Slot 2 Constitution Stat Boost", world.player, 4 / world.options.statsanity_boost_by) \
+                                and state.has("Slot 2 Intelligence Stat Boost", world.player, 4 / world.options.statsanity_boost_by) \
+                                and state.has("Slot 2 Wisdom Stat Boost", world.player, 4 / world.options.statsanity_boost_by) \
+                                and state.has("Slot 2 Charisma Stat Boost", world.player, 4 / world.options.statsanity_boost_by) \
+                                and state.has("Slot 3 Strength Stat Boost", world.player, 4 / world.options.statsanity_boost_by) \
+                                and state.has("Slot 3 Dexterity Stat Boost", world.player, 4 / world.options.statsanity_boost_by) \
+                                and state.has("Slot 3 Constitution Stat Boost", world.player, 4 / world.options.statsanity_boost_by) \
+                                and state.has("Slot 3 Intelligence Stat Boost", world.player, 4 / world.options.statsanity_boost_by) \
+                                and state.has("Slot 3 Wisdom Stat Boost", world.player, 4 / world.options.statsanity_boost_by) \
+                                and state.has("Slot 3 Charisma Stat Boost", world.player, 4 / world.options.statsanity_boost_by) \
+                                and state.has("Slot 4 Strength Stat Boost", world.player, 4 / world.options.statsanity_boost_by) \
+                                and state.has("Slot 4 Dexterity Stat Boost", world.player, 4 / world.options.statsanity_boost_by) \
+                                and state.has("Slot 4 Constitution Stat Boost", world.player, 4 / world.options.statsanity_boost_by) \
+                                and state.has("Slot 4 Intelligence Stat Boost", world.player, 4 / world.options.statsanity_boost_by) \
+                                and state.has("Slot 4 Wisdom Stat Boost", world.player, 4 / world.options.statsanity_boost_by) \
+                                and state.has("Slot 4 Charisma Stat Boost", world.player, 4 / world.options.statsanity_boost_by)) # Level 5
+
     blighted_village.connect(waukeen, "Blighted Village to Waukeen", lambda state: state.has("Level Fragment", world.player, 6)) # Level 4
 
     if (world.options.goal != world.options.goal.option_rescue_halsin):

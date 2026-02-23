@@ -4,6 +4,7 @@ from itertools import count
 import os
 import sys
 import asyncio
+import typing
 from typing import Tuple, List, Iterable, Dict
 
 from .world import BG3World
@@ -58,6 +59,25 @@ class BG3ClientCommandProcessor(ClientCommandProcessor):
         self.output(f"Syncing items.")
         self.syncing = True
 
+    def _cmd_deathlink(self):
+        """Toggles deathlink On/Off"""
+        if isinstance(self.ctx, BG3Context):
+            self.ctx.has_death_link = not self.ctx.has_death_link
+            Utils.async_start(self.ctx.update_death_link(self.ctx.has_death_link), name="Update Deathlink")
+            if self.ctx.has_death_link:
+                death_link_send_file = os.path.join(self.ctx.se_bg3, self.ctx.deathlink_out)
+                if os.path.exists(death_link_send_file):
+                    with open(death_link_send_file, 'w') as f:
+                        f.write("[]")
+                self.output(f"Deathlink enabled.")
+            else:
+                death_link_receive_file = os.path.join(self.ctx.se_bg3, self.ctx.deathlink_in)
+                if os.path.exists(death_link_receive_file):
+                    with open(death_link_receive_file, 'w') as f:
+                        f.write("[]")
+                self.output(f"Deathlink disabled.")
+
+
 
 class BG3Context(CommonContext):
     command_processor = BG3ClientCommandProcessor
@@ -69,6 +89,8 @@ class BG3Context(CommonContext):
     comm_file_locations_checked = "ap_out.json"
     item_uuids = "items_to_remove.json"
     sync_option = "ap_options.json"
+    deathlink_in = "deathLinkReceive.json"
+    deathlink_out = "deathLinkSend.json"
 
     def __init__(self, server_address, password):
         super(BG3Context, self).__init__(server_address, password)
@@ -104,6 +126,11 @@ class BG3Context(CommonContext):
         list_of_guids = [item[1] for item in EQUIPMENT]
         with open(os.path.join(self.se_bg3, self.item_uuids), "w") as file:
             json.dump(list_of_guids, file)
+
+    def on_deathlink(self, data: typing.Dict[str, typing.Any]) -> None:
+        with open(os.path.join(self.se_bg3, self.deathlink_in), 'w') as file:
+            file.write('["DeathLink"]')
+        super(BG3Context, self).on_deathlink(data)
 
     async def server_auth(self, password_requested: bool = False):
         if password_requested and not self.password:
@@ -152,9 +179,10 @@ class BG3Context(CommonContext):
     def on_package(self, cmd: str, args: dict):
         if cmd in {"Connected"}:
             slot_data = args["slot_data"]
+            self.has_death_link = slot_data.get("death_link", False)
             global goal
             goal = slot_data["goal"]
-            if (goal == 2 or goal ==4):
+            if (goal == 2 or goal == 4):
                 global user_defined_fights
                 global goalbosses
                 user_defined_fights = slot_data["user_defined_fights"]
@@ -274,6 +302,16 @@ async def game_watcher(ctx: BG3Context):
                 if not ctx.finished_game and victory:
                     await ctx.send_msgs([{"cmd": "StatusUpdate", "status": ClientStatus.CLIENT_GOAL}])
                     ctx.finished_game = True
+            path = os.path.join(ctx.se_bg3, ctx.deathlink_out)
+            if (os.path.isfile(path) and ctx.has_death_link):
+                with open(path, 'r') as file:
+                    deaths = json.load(file);
+                    if ctx.slot is not None:
+                        for death in deaths:
+                            await ctx.send_death(f"{ctx.player_names[ctx.slot]} had {death} hang out with Jergal for a bit.")
+                with open(path, 'w') as file:
+                    json.dump([], file)
+                    
             await asyncio.sleep(3)
 
         except Exception as err:

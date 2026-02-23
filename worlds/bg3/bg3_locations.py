@@ -2366,6 +2366,7 @@ BG3_LOCATION_LIST = [
     ["Kill-S_UND_LoneDuergar_Squad_Caster_ffacce35-8921-429a-8266-6d4a7a98428d", ["Underdark: Kill Lurgan"], 1],
     ["Kill-S_UND_LoneDuergar_BoatGuard_8146788d-9d39-4cf2-99ca-03484deb0c55", ["Underdark: Kill Novice Garmor"], 1],
     ["Kill-S_UND_Myconid_BroodingSovereign_82af0858-d739-4c9d-84c8-5e6760e22e46", ["Underdark: Kill Sovereign Glut", "Grotto: Kill one of the Sovereigns"], 1],
+    ["Kill-S_UND_MyconidSovereign_ea0f222f-eaad-4d83-bbcd-cbae51ccf265", ["Grotto: Kill one of the Sovereigns"], 1],
     ["Kill-S_UND_PetrifiedDrow_Spectator_39ff8241-fadd-4fbe-ab89-fc5a8b7638a0", ["Underdark: Kill Spectator"], 1],
     ["Kill-S_UND_KethericCity_AnimatedArmor_004_85f05bb9-0d02-40f2-9fa9-194f86b93a75", ["Forge: Kill Animated Armor 1"], 1],
     ["Kill-S_UND_KethericCity_AnimatedArmor_003_01b7d71a-78cd-46c3-ad3a-8910774f58d6", ["Forge: Kill Animated Armor 2"], 1],

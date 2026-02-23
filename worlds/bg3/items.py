@@ -36,6 +36,37 @@ ITEM_TUPLES = [
     ["Boots of Speed", "8b22d15a-85bb-4c8d-90cf-a773fc451eac", 2, ItemClassification.progression, 1],
     ["Shadow Lantern", "c9ebcfae-8c9a-4acc-8a30-da7830b32121", 3, ItemClassification.progression, 2],
     ["Spear of Night", "d590884d-55a2-4136-9777-531ee7d53f7e", 4, ItemClassification.progression, 2],
+    ["Strength Stat Boost", "StrStatBoost", 5, ItemClassification.progression, 0],
+    ["Dexterity Stat Boost", "DexStatBoost", 6, ItemClassification.progression, 0],
+    ["Constitution Stat Boost", "ConStatBoost", 7, ItemClassification.progression, 0],
+    ["Intelligence Stat Boost", "IntStatBoost", 8, ItemClassification.progression, 0],
+    ["Wisdom Stat Boost", "WisStatBoost", 9, ItemClassification.progression, 0],
+    ["Charisma Stat Boost", "ChaStatBoost", 10, ItemClassification.progression, 0],
+    ["Slot 1 Strength Boost", "Slot1StrStatBoost", 11, ItemClassification.progression, 0],
+    ["Slot 1 Dexterity Boost", "Slot1DexStatBoost", 12, ItemClassification.progression, 0],
+    ["Slot 1 Constitution Boost", "Slot1ConStatBoost", 13, ItemClassification.progression, 0],
+    ["Slot 1 Intelligence Boost", "Slot1IntStatBoost", 14, ItemClassification.progression, 0],
+    ["Slot 1 Wisdom Boost", "Slot1WisStatBoost", 15, ItemClassification.progression, 0],
+    ["Slot 1 Charisma Boost", "Slot1ChaStatBoost", 16, ItemClassification.progression, 0],
+    ["Slot 2 Strength Boost", "Slot2StrStatBoost", 17, ItemClassification.progression, 0],
+    ["Slot 2 Dexterity Boost", "Slot2DexStatBoost", 18, ItemClassification.progression, 0],
+    ["Slot 2 Constitution Boost", "Slot2ConStatBoost", 19, ItemClassification.progression, 0],
+    ["Slot 2 Intelligence Boost", "Slot2IntStatBoost", 20, ItemClassification.progression, 0],
+    ["Slot 2 Wisdom Boost", "Slot2WisStatBoost", 21, ItemClassification.progression, 0],
+    ["Slot 2 Charisma Boost", "Slot2ChaStatBoost", 22, ItemClassification.progression, 0],
+    ["Slot 3 Strength Boost", "Slot3StrStatBoost", 23, ItemClassification.progression, 0],
+    ["Slot 3 Dexterity Boost", "Slot3DexStatBoost", 24, ItemClassification.progression, 0],
+    ["Slot 3 Constitution Boost", "Slot3ConStatBoost", 25, ItemClassification.progression, 0],
+    ["Slot 3 Intelligence Boost", "Slot3IntStatBoost", 26, ItemClassification.progression, 0],
+    ["Slot 3 Wisdom Boost", "Slot3WisStatBoost", 27, ItemClassification.progression, 0],
+    ["Slot 3 Charisma Boost", "Slot3ChaStatBoost", 28, ItemClassification.progression, 0],
+    ["Slot 4 Strength Boost", "Slot4StrStatBoost", 29, ItemClassification.progression, 0],
+    ["Slot 4 Dexterity Boost", "Slot4DexStatBoost", 30, ItemClassification.progression, 0],
+    ["Slot 4 Constitution Boost", "Slot4ConStatBoost", 31, ItemClassification.progression, 0],
+    ["Slot 4 Intelligence Boost", "Slot4IntStatBoost", 32, ItemClassification.progression, 0],
+    ["Slot 4 Wisdom Boost", "Slot4WisStatBoost", 33, ItemClassification.progression, 0],
+    ["Slot 4 Charisma Boost", "Slot4ChaStatBoost", 34, ItemClassification.progression, 0],
+    
 ] + [[item[0], item[1], index + 1000, ItemClassification.useful, item[2]] for index, item in enumerate(EQUIPMENT)] \
   + [[item[0], item[1], index + 5000, ItemClassification.filler, 0] for index, item in enumerate(FILLER_EQUIPMENT)] \
   + [[item[0], item[1], index + 7000, ItemClassification.trap, 0] for index, item in enumerate(TRAP_OPTIONS)] 
@@ -112,6 +143,47 @@ def create_all_items(world: BG3World) -> None:
     levelups_to_add = levelups_to_add + world.options.additional_level_ups
     itempool += [world.create_item("Level Fragment") for _ in range(levelups_to_add)]
     # Here we would add other progression items as we have them.
+    if (world.options.statsanity != world.options.statsanity.option_off):
+        required_stat = 20
+        if (world.options.goal == world.options.goal.option_rescue_halsin):
+            required_stat = 12
+        elif (world.options.goal == world.options.goal.option_kill_inquisitor_wwargaz or world.options.goal == world.options.goal.option_act1_user_defined_fights):
+            required_stat = 16
+        elif (world.options.goal == world.options.goal.option_kill_myrkul or world.options.goal == world.options.goal.option_act2_user_defined_fights):
+            required_stat = 20
+        stats_per_slot = (required_stat - 8) // world.options.statsanity_boost_by
+        if (world.options.statsanity == world.options.statsanity.option_universal_stats or world.options.statsanity == world.options.statsanity.option_tav_only_stats):
+            itempool += [world.create_item("Strength Stat Boost") for _ in range(stats_per_slot)]
+            itempool += [world.create_item("Dexterity Stat Boost") for _ in range(stats_per_slot)]
+            itempool += [world.create_item("Constitution Stat Boost") for _ in range(stats_per_slot)]
+            itempool += [world.create_item("Intelligence Stat Boost") for _ in range(stats_per_slot)]
+            itempool += [world.create_item("Wisdom Stat Boost") for _ in range(stats_per_slot)]
+            itempool += [world.create_item("Charisma Stat Boost") for _ in range(stats_per_slot)]
+        else: # party slots
+            itempool += [world.create_item("Slot 1 Strength Boost") for _ in range(stats_per_slot)]
+            itempool += [world.create_item("Slot 1 Dexterity Boost") for _ in range(stats_per_slot)]
+            itempool += [world.create_item("Slot 1 Constitution Boost") for _ in range(stats_per_slot)]
+            itempool += [world.create_item("Slot 1 Intelligence Boost") for _ in range(stats_per_slot)]
+            itempool += [world.create_item("Slot 1 Wisdom Boost") for _ in range(stats_per_slot)]
+            itempool += [world.create_item("Slot 1 Charisma Boost") for _ in range(stats_per_slot)]
+            itempool += [world.create_item("Slot 2 Strength Boost") for _ in range(stats_per_slot)]
+            itempool += [world.create_item("Slot 2 Dexterity Boost") for _ in range(stats_per_slot)]
+            itempool += [world.create_item("Slot 2 Constitution Boost") for _ in range(stats_per_slot)]
+            itempool += [world.create_item("Slot 2 Intelligence Boost") for _ in range(stats_per_slot)]
+            itempool += [world.create_item("Slot 2 Wisdom Boost") for _ in range(stats_per_slot)]
+            itempool += [world.create_item("Slot 2 Charisma Boost") for _ in range(stats_per_slot)]
+            itempool += [world.create_item("Slot 3 Strength Boost") for _ in range(stats_per_slot)]
+            itempool += [world.create_item("Slot 3 Dexterity Boost") for _ in range(stats_per_slot)]
+            itempool += [world.create_item("Slot 3 Constitution Boost") for _ in range(stats_per_slot)]
+            itempool += [world.create_item("Slot 3 Intelligence Boost") for _ in range(stats_per_slot)]
+            itempool += [world.create_item("Slot 3 Wisdom Boost") for _ in range(stats_per_slot)]
+            itempool += [world.create_item("Slot 3 Charisma Boost") for _ in range(stats_per_slot)]
+            itempool += [world.create_item("Slot 4 Strength Boost") for _ in range(stats_per_slot)]
+            itempool += [world.create_item("Slot 4 Dexterity Boost") for _ in range(stats_per_slot)]
+            itempool += [world.create_item("Slot 4 Constitution Boost") for _ in range(stats_per_slot)]
+            itempool += [world.create_item("Slot 4 Intelligence Boost") for _ in range(stats_per_slot)]
+            itempool += [world.create_item("Slot 4 Wisdom Boost") for _ in range(stats_per_slot)]
+            itempool += [world.create_item("Slot 4 Charisma Boost") for _ in range(stats_per_slot)]
 
     # Add Treasure
     # The length of our itempool is easy to determine, since we have it as a list.

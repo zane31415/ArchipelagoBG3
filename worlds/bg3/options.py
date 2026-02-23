@@ -4,6 +4,7 @@ from Options import Choice, OptionGroup, PerGameCommonOptions, Range, Toggle, Op
 
 class Goal(Choice):
     """
+    (Dev note: Progression Balancing is recommended to be 0)
     Determines what location counts as victory.
     These goals also determine how many level ups are placed in the pool-
     Rescue Halsin: Level Cap 5 - goal is to rescue Halsin and return him safely to the Grove.
@@ -101,6 +102,63 @@ class QuestSanity(Toggle):
     #option_important_hostiles = 2
     #option_progressive_count = 3
     default = option_most_content
+
+class ContainerSanity(Toggle):
+    """
+    Whether opening containers should be locations. Currently unimplemented and exists only for testing.
+    Even if it was, don't do this.
+    """
+    display_name = "Containersanity"
+    option_off = 0
+    option_no_really_dont_do_this = 1
+    option_i_suppose_if_you_insist = 2
+    default = option_off
+
+class StatSanity(Toggle):
+    """
+    Whether stats should be items. Currently unimplemented. If selected, all characters start at all stats at 8 and you must
+    get stats from the multiworld. This is currently only in testing.
+    Tav only stats: Only Tav's stats are randomized, and the companions' stats are left alone.
+    Party slots: Stats are only applied to party slots, and not the characters. Rearranging the party will rearrange stats.
+    Universal stats: Stats are not character specific, and all characters get the same stat boosts when a stat item is received.
+    """
+    display_name = "Statsanity"
+    option_off = 0
+    option_tav_only_stats = 1
+    option_party_slots = 2
+    option_universal_stats = 3
+    default = option_off
+
+class StatSanityBoostBy(Range):
+    """
+    If Statsanity is on, determines how much each stat item boosts the stat by.
+    Halsin requires stats at 12, Wwargaz requires stats at 16, Myrkul requires stats at 20.
+    The number of item slots taken will be characters * 6 * (required_stat - 8) / boost_amount, 
+    so for example if boost_amount is 2, goal is Myrkul, and party_slots is chosen,
+    the number of items taken will be 4*6*6 = 144 (this is the highest option).
+    Even numbers only, please.
+    """
+    display_name = "Statsanity Boost By"
+    range_start = 2
+    range_end = 8
+    default = 2
+
+#class CharactersInLogic(OptionSet):
+#    """
+#    If Statsanity is on, determines which characters' stats are included in logic.
+#    If Questsanity is on, determines which characters' quest completions are included in logic.
+#    Currently in testing.
+#    """
+#    valid_keys = ["Astarion", "Gale", "Karlach", "Lae'zel", "Shadowheart", "Wyll", "Halsin", "Minthara"]
+#    display_name = "Characters in Logic"
+#    default = {"Astarion", "Gale", "Karlach", "Lae'zel", "Shadowheart", "Wyll", "Halsin", "Minthara"}
+
+class Deathlink(Toggle):
+    """
+    If true, when a player dies, all players receive an item that kills them. Currently in testing.
+    """
+    display_name = "Deathlink"
+    default = False
 
 class AdditionalLevelUps(Range):
     """
@@ -235,6 +293,11 @@ class BG3Options(PerGameCommonOptions):
     user_defined_fights: UserDefinedFights
     killsanity: KillSanity
     questsanity: QuestSanity
+    containersanity: ContainerSanity
+    statsanity: StatSanity
+    statsanity_boost_by: StatSanityBoostBy
+#    characters_in_logic: CharactersInLogic
+    deathlink: Deathlink
     sync_method: SyncMethod
     add_act1a_treasure: AddAct1ATreasure
     add_act1b_treasure: AddAct1BTreasure
