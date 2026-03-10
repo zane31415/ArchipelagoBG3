@@ -2022,7 +2022,7 @@ BG3_LOCATION_LIST = [
     ["ORI_COM_Karlach-FindInfernalMetal_SecondUpgrade_Act2", [], 2],
     ["ORI_COM_Karlach-GetFirstUpgrade_Act2", ["Karlach-Heart: Get First Heart Upgrade"], 2],
     ["ORI_COM_Karlach-GetSecondUpgrade_Act2", ["Karlach-Heart: Get Second Heart Upgrade"], 2],
-    ["ORI_COM_Karlach-KarlachFullyUpgraded_Act2", [], 2],
+    ["ORI_COM_Karlach-KarlachFullyUpgraded_Act2", ["Karlach-Heart: Get Second Heart Upgrade"], 2],
     ["ORI_COM_Karlach-TalkToDammon_Act2", [], 2],
     ["ORI_COM_Karlach-WaitForNextDay_Act2", [], 2],
     ["ORI_COM_Karlach-KethericDefeated", [], 2],
