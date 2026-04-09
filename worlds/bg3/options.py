@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from Options import Choice, OptionGroup, PerGameCommonOptions, Range, Toggle, OptionSet
+from Options import Choice, OptionGroup, PerGameCommonOptions, Range, Toggle, OptionSet, Visibility
 
 class Goal(Choice):
     """
@@ -68,7 +68,7 @@ class UserDefinedFights(OptionSet):
         "Balthazar",
         "Myrkul"}
 
-class KillSanity(Toggle):
+class KillSanity(Choice):
     """
     Whether kills of individual creatures should be locations.
     Kills do _not_ count if they are done by falling damage or by being thrown into a chasm.
@@ -87,7 +87,7 @@ class KillSanity(Toggle):
     #option_progressive_count = 3
     default = option_off
 
-class QuestSanity(Toggle):
+class QuestSanity(Choice):
     """
     Whether quest updates should be locations.
     Some locations may be buggy or missable- please tell the BG3 channel if any quest doesn't complete that you think should've.
@@ -103,7 +103,7 @@ class QuestSanity(Toggle):
     #option_progressive_count = 3
     default = option_most_content
 
-class ContainerSanity(Toggle):
+class ContainerSanity(Choice):
     """
     Whether opening containers should be locations. Currently unimplemented and exists only for testing.
     Even if it was, don't do this.
@@ -114,7 +114,7 @@ class ContainerSanity(Toggle):
     option_i_suppose_if_you_insist = 2
     default = option_off
 
-class StatSanity(Toggle):
+class StatSanity(Choice):
     """
     Whether stats should be items. Currently unimplemented. If selected, all characters start at all stats at 8 and you must
     get stats from the multiworld. This is currently only in testing.
@@ -122,6 +122,7 @@ class StatSanity(Toggle):
     Party slots: Stats are only applied to party slots, and not the characters. Rearranging the party will rearrange stats.
     Universal stats: Stats are not character specific, and all characters get the same stat boosts when a stat item is received.
     """
+    visibility = Visibility.none
     display_name = "Statsanity"
     option_off = 0
     option_tav_only_stats = 1
@@ -138,6 +139,7 @@ class StatSanityBoostBy(Range):
     the number of items taken will be 4*6*6 = 144 (this is the highest option).
     Even numbers only, please.
     """
+    visibility = Visibility.none
     display_name = "Statsanity Boost By"
     range_start = 2
     range_end = 8
