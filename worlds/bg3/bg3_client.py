@@ -180,6 +180,13 @@ class BG3Context(CommonContext):
         if cmd in {"Connected"}:
             slot_data = args["slot_data"]
             self.has_death_link = slot_data.get("death_link", False)
+            # Propagate the flag to self.tags via the CommonContext helper.
+            # Without this, has_death_link is set locally but the server is
+            # never told to relay deathlinks to this client, so inbound
+            # deathlinks are silently dropped. Every other AP world client
+            # that supports deathlink does this same propagation in
+            # on_package (pokemon_emerald, tww, factorio, cv64, etc.).
+            Utils.async_start(self.update_death_link(self.has_death_link), name="Update Deathlink")
             global goal
             goal = slot_data["goal"]
             if (goal == 2 or goal == 4):
