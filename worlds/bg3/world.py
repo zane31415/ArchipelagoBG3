@@ -73,6 +73,11 @@ class BG3World(World):
     # slot_data is just a dictionary using basic types, that will be converted to json when sent to the client.
     def fill_slot_data(self) -> Mapping[str, Any]:
         # If you need access to the player's chosen options on the client side, there is a helper for that.
-        return self.options.as_dict(
+        slot_data = self.options.as_dict(
             "goal", "sync_method", "user_defined_fights", "deathlink", "killsanity", "questsanity", "containersanity"#, "statsanity"
         )
+        # Rename to the Archipelago-standard slot_data key so the client and other tooling
+        # can read deathlink via the conventional "death_link" key without a BG3-specific
+        # special case. The YAML/option attribute stays as "deathlink" for back-compat.
+        slot_data["death_link"] = slot_data.pop("deathlink")
+        return slot_data
