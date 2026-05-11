@@ -80,4 +80,8 @@ class BG3World(World):
         # can read deathlink via the conventional "death_link" key without a BG3-specific
         # special case. The YAML/option attribute stays as "deathlink" for back-compat.
         slot_data["death_link"] = slot_data.pop("deathlink")
+        # Forward the multiworld seed identifier so the BG3 mod can detect when the player
+        # is connecting against a different generation and wipe its dedup state, instead of
+        # silently swallowing items from a fresh seed because PersistentVars.APSent is stale.
+        slot_data["seed_name"] = self.multiworld.seed_name
         return slot_data
