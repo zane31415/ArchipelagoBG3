@@ -1473,7 +1473,7 @@ BG3_LOCATION_LIST = [
     ["ORI_COM_ShadowHeart-WolfPhobiaDiscussedDreamShared", ["Shart: Learn about Wolf Phobia", "Shart: Discuss Wolf Phobia", "Shart: Discuss Wolf Dream"], 1],
     ["SHA_Nightsong-EnteredUnderdark", ["Nightsong: Enter Underdark"], 1],
     ["SHA_Nightsong-HalsinToldSharTemple", [], 1],
-    ["SHA_Nightsong-ReachedGrymforge", ["Nightsong: Reach Grymforge"], 1],
+    ["SHA_Nightsong-ReachedGrymforge", [], 1],
     ["SHA_Nightsong-ReadHalsinDiary", [], 1],
     ["SHA_Nightsong-ReadJusticiarBook", [], 1],
     ["SHA_Nightsong-RefinedLocation", [], 1],
