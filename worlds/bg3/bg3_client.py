@@ -91,6 +91,7 @@ class BG3Context(CommonContext):
     sync_option = "ap_options.json"
     deathlink_in = "deathLinkReceive.json"
     deathlink_out = "deathLinkSend.json"
+    seed_name = ""
 
     def __init__(self, server_address, password):
         super(BG3Context, self).__init__(server_address, password)
@@ -179,7 +180,10 @@ class BG3Context(CommonContext):
     def on_package(self, cmd: str, args: dict):
         if cmd in {"Connected"}:
             slot_data = args["slot_data"]
+            if "seed_name" in args and args["seed_name"]:
+                self.seed_name = args["seed_name"]
             self.has_death_link = slot_data.get("death_link", False)
+            Utils.async_start(self.update_death_link(self.has_death_link), name="Update Deathlink")
             global goal
             goal = slot_data["goal"]
             if (goal == 2 or goal == 4):
@@ -198,12 +202,13 @@ class BG3Context(CommonContext):
             received_items = [AP_ITEM_TO_BG3_ID[self.item_names.lookup_in_game(network_item.item)] for network_item in self.items_received]
             counter = count()
             received_items = [f"LevelUp<{next(counter)}>" if item == "LevelUp" else item for item in received_items]
-            path = os.path.join(self.se_bg3, self.comm_file_sent_items)
+            path = os.path.join(self.se_bg3, self.seed_name + self.comm_file_sent_items)
             with open(path, 'w') as f:
                 json.dump(received_items, f)
 
         if cmd in {"RoomInfo"}:
-            self.seed_name = args["seed_name"]
+            if "seed_name" in args and args["seed_name"]:
+                self.seed_name = args["seed_name"]
 
         if cmd in {"ReceivedItems"}:
             received_items = [AP_ITEM_TO_BG3_ID[self.item_names.lookup_in_game(network_item.item)] for network_item in self.items_received]
@@ -217,101 +222,96 @@ class BG3Context(CommonContext):
                               else f"{item}-{next(trapcounter)}" if item[:4] == "Trap" \
                               else f"Dupe-{next(fillercounter):04}-{item}" if IS_DUPEABLE.get(item, False) \
                               else item for item in received_items]
-            path = os.path.join(self.se_bg3, self.comm_file_sent_items)
+            path = os.path.join(self.se_bg3, self.seed_name + self.comm_file_sent_items)
             with open(path, 'w') as f:
                 json.dump(received_items, f)
 
         if cmd in {"RoomUpdate"}:
             if "checked_locations" in args:
-                path = os.path.join(self.se_bg3, self.comm_file_locations_checked)
+                path = os.path.join(self.se_bg3, self.seed_name + self.comm_file_locations_checked)
                 #And then we did nothing with it
 
 async def game_watcher(ctx: BG3Context):
-    once = False
     while not ctx.exit_event.is_set():
         try:
             if ctx.syncing == True:
                 sync_msg = [{'cmd': 'Sync'}]
-                #if ctx.locations_checked:
-                    #sync_msg.append({"cmd": "LocationChecks", "locations": list(ctx.locations_checked)})
                 await ctx.send_msgs(sync_msg)
                 ctx.syncing = False
             sending = []
             victory = False
             bg3LocationsToSend = []
 
-            path = os.path.join(ctx.se_bg3, ctx.comm_file_locations_checked)
-            if (os.path.isfile(path)):
-                with open(path, 'r') as f:
-                    bg3LocationsToSend = json.load(f)
-                # Clear out the locations to send file for changing between runs
-#                with open(path, 'w') as f:
-#                    f.write("[]")
-            else:
-                with open(path, 'w') as f:
-                    f.write("[]")
-            if goal != -1:
-                global goalbosses
-                if goal not in [0,1,2,3,4]:
-                    logger.error(f"Your version of the apworld is not compatible with server's version. Please update your apworld and try again.")
-                    logger.error(goal)
-                for loc in bg3LocationsToSend:
-                    if loc in BG3_LOCATION_TO_AP_LOCATIONS:
-                        for apLoc in BG3_LOCATION_TO_AP_LOCATIONS[loc]:
-                            if apLoc not in ctx.checked_locations and apLoc in LOCATION_NAME_TO_ID:
-                                sending = sending + [LOCATION_NAME_TO_ID[apLoc]]
-                                ctx.checked_locations.add(LOCATION_NAME_TO_ID[apLoc])
-                            if apLoc not in LOCATION_NAME_TO_ID and apLoc not in bugged_locations:
-                                logger.error(f"BUG: Please tell BG3 channel that {apLoc} is a typo and needs fixing. This location may need a server send_location to fix this run.")
-                                bugged_locations.append(apLoc)
-                            if apLoc == "Victory_Halsin" and goal == 0:
-                                victory = True
-                            elif apLoc == "Victory_Wwargaz" and goal == 1:
-                                victory = True
-                            elif apLoc == "Victory_Myrkul" and goal == 3:
-                                victory = True
-                            elif (apLoc not in ctx.checked_locations) and (apLoc in goalbosses) and (goal == 2 or goal == 4):
-                                remaining_bosses = [
-                                    boss for boss in goalbosses 
-                                    if LOCATION_NAME_TO_ID[boss] not in ctx.checked_locations
-                                ]
-                                if not remaining_bosses:
+            if (ctx.seed_name is not None) :
+                path = os.path.join(ctx.se_bg3, ctx.seed_name + ctx.comm_file_locations_checked)
+                if (os.path.isfile(path)):
+                    with open(path, 'r') as f:
+                        bg3LocationsToSend = json.load(f)
+                else:
+                    with open(path, 'w') as f:
+                        f.write("[]")
+                if goal != -1:
+                    global goalbosses
+                    if goal not in [0,1,2,3,4]:
+                        logger.error(f"Your version of the apworld is not compatible with server's version. Please update your apworld and try again.")
+                        logger.error(goal)
+                    for loc in bg3LocationsToSend:
+                        if loc in BG3_LOCATION_TO_AP_LOCATIONS:
+                            for apLoc in BG3_LOCATION_TO_AP_LOCATIONS[loc]:
+                                if apLoc not in ctx.checked_locations and apLoc in LOCATION_NAME_TO_ID:
+                                    sending = sending + [LOCATION_NAME_TO_ID[apLoc]]
+                                    ctx.checked_locations.add(LOCATION_NAME_TO_ID[apLoc])
+                                if apLoc not in LOCATION_NAME_TO_ID and apLoc not in bugged_locations:
+                                    logger.error(f"BUG: Please tell BG3 channel that {apLoc} is a typo and needs fixing. This location may need a server send_location to fix this run.")
+                                    bugged_locations.append(apLoc)
+                                if apLoc == "Victory_Halsin" and goal == 0:
                                     victory = True
-                                else:
-                                    goalbosses = remaining_bosses
-                                    logger.error(f"Remaining bosses to defeat for goal: {goalbosses}")
-                            elif apLoc == "Bad_State" and loc not in bad_states:
-                                logger.error(f"Something has happened in the game that may make some locations unreachable. Consider loading an earlier save.")
-                                bad_states.append(loc)
-                    elif loc[:5] == "Kill-":
-                        pass # A kill that we don't track for this setting, ignore it.
-                    elif loc not in bugged_locations:
-                        # logger.error(f"Please tell BG3 channel about {loc}- it was not handled. This probably doesn't break anything, but it should be looked at.")
-                        bugged_locations.append(loc)
-                if goal == 2 or goal == 4:
-                    remaining_bosses = [
-                        boss for boss in goalbosses 
-                        if LOCATION_NAME_TO_ID[boss] not in ctx.checked_locations
-                    ]
-                    if not remaining_bosses:
-                        victory = True
-                    goalbosses = remaining_bosses
+                                elif apLoc == "Victory_Wwargaz" and goal == 1:
+                                    victory = True
+                                elif apLoc == "Victory_Myrkul" and goal == 3:
+                                    victory = True
+                                elif (apLoc not in ctx.checked_locations) and (apLoc in goalbosses) and (goal == 2 or goal == 4):
+                                    remaining_bosses = [
+                                        boss for boss in goalbosses 
+                                        if LOCATION_NAME_TO_ID[boss] not in ctx.checked_locations
+                                    ]
+                                    if not remaining_bosses:
+                                        victory = True
+                                    else:
+                                        goalbosses = remaining_bosses
+                                        logger.error(f"Remaining bosses to defeat for goal: {goalbosses}")
+                                elif apLoc == "Bad_State" and loc not in bad_states:
+                                    logger.error(f"Something has happened in the game that may make some locations unreachable. Consider loading an earlier save.")
+                                    bad_states.append(loc)
+                        elif loc[:5] == "Kill-":
+                            pass # A kill that we don't track for this setting, ignore it.
+                        elif loc not in bugged_locations:
+                            # logger.error(f"Please tell BG3 channel about {loc}- it was not handled. This probably doesn't break anything, but it should be looked at.")
+                            bugged_locations.append(loc)
+                    if goal == 2 or goal == 4:
+                        remaining_bosses = [
+                            boss for boss in goalbosses 
+                            if LOCATION_NAME_TO_ID[boss] not in ctx.checked_locations
+                        ]
+                        if not remaining_bosses:
+                            victory = True
+                        goalbosses = remaining_bosses
 
-                message = [{"cmd": 'LocationChecks', "locations": sending}]
-                await ctx.send_msgs(message)
-                if not ctx.finished_game and victory:
-                    await ctx.send_msgs([{"cmd": "StatusUpdate", "status": ClientStatus.CLIENT_GOAL}])
-                    ctx.finished_game = True
-            path = os.path.join(ctx.se_bg3, ctx.deathlink_out)
-            if (os.path.isfile(path) and ctx.has_death_link):
-                with open(path, 'r') as file:
-                    deaths = json.load(file);
-                    if ctx.slot is not None:
-                        for death in deaths:
-                            await ctx.send_death(f"{ctx.player_names[ctx.slot]} had {death} hang out with Jergal for a bit.")
-                with open(path, 'w') as file:
-                    json.dump([], file)
-                    
+                    message = [{"cmd": 'LocationChecks', "locations": sending}]
+                    await ctx.send_msgs(message)
+                    if not ctx.finished_game and victory:
+                        await ctx.send_msgs([{"cmd": "StatusUpdate", "status": ClientStatus.CLIENT_GOAL}])
+                        ctx.finished_game = True
+                path = os.path.join(ctx.se_bg3, ctx.deathlink_out)
+                if (os.path.isfile(path) and ctx.has_death_link):
+                    with open(path, 'r') as file:
+                        deaths = json.load(file);
+                        if ctx.slot is not None:
+                            for death in deaths:
+                                await ctx.send_death(f"{ctx.player_names[ctx.slot]} had {death} hang out with Jergal for a bit.")
+                    with open(path, 'w') as file:
+                        json.dump([], file)
+                        
             await asyncio.sleep(3)
 
         except Exception as err:
