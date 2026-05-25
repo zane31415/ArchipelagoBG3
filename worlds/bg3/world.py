@@ -33,6 +33,17 @@ class BG3World(World):
 
     settings: ClassVar[settings.BG3Settings]
 
+    # Universal Tracker integration. UT reads this dict to wire up its map
+    # tab. We use an external-pack layout (the actual pack zip lives on
+    # disk outside the apworld, path supplied via the ut_pack_path
+    # setting). Section names in the pack match AP location names
+    # exactly, so no `poptracker_name_mapping` is needed.
+    tracker_world: ClassVar = {
+        "external_pack_key": "ut_pack_path",
+        "map_page_maps": "maps/maps.json",
+        "map_page_locations": "locations/locations.json",
+    }
+
     # Our world class must have a static location_name_to_id and item_name_to_id defined.
     # We define these in regions.py and items.py respectively, so we just set them here.
     location_name_to_id = locations.LOCATION_NAME_TO_ID

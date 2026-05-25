@@ -1,5 +1,6 @@
 import settings
 import os
+from typing import Union
 
 class BG3Settings(settings.Group):
     class RootDirectory(settings.UserFolderPath):
@@ -16,4 +17,14 @@ class BG3Settings(settings.Group):
                        "Please select the BG3 install folder. It should look something like AppData/Local/Larian Studios/Baldur's Gate 3/.")
             return super().browse(**kwargs)
 
+    class UTPackPath(settings.FilePath):
+        """
+        Path to the BG3 PopTracker pack zip used by Universal Tracker
+        for the map tab. Leave blank to be prompted on first launch;
+        set to None to disable the UT map tab entirely.
+        """
+        required = False
+        ut_dialog_name = "Select BG3 PopTracker pack (zip)"
+
     root_directory: RootDirectory = RootDirectory(os.path.join("%LOCALAPPDATA%", "Larian Studios", "Baldur's Gate 3"))
+    ut_pack_path: Union[UTPackPath, str] = UTPackPath()
