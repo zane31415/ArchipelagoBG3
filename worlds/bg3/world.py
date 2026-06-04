@@ -33,6 +33,74 @@ class BG3World(World):
 
     settings: ClassVar[settings.BG3Settings]
 
+    # Universal Tracker integration. UT reads this dict to wire up its map
+    # tab. We use an external-pack layout (the actual pack zip lives on
+    # disk outside the apworld, path supplied via the ut_pack_path
+    # setting). Section names in the pack match AP location names
+    # exactly, so no `poptracker_name_mapping` is needed.
+    tracker_world: ClassVar = {
+        "external_pack_key": "ut_pack_path",
+        "map_page_maps": "maps/maps.json",
+        "map_page_locations": "locations/locations.json",
+    }
+
+    # Tell UT this world can re-generate from slot_data alone, without the
+    # player's YAML on disk. Requires fill_slot_data to carry every
+    # generation-affecting option (see _UT_GEN_OPTION_KEYS below),
+    # interpret_slot_data to signal the re-gen path, and generate_early
+    # to read the passthrough back into self.options before the rest of
+    # generation runs.
+    ut_can_gen_without_yaml = True
+
+    # Names of options that affect generation (location creation, item
+    # pool composition, rule fan-out). Sent in slot_data so UT can
+    # rebuild the world from the server without needing the original
+    # YAML, and re-applied in generate_early during the UT re-gen pass.
+    # Keep in sync with the option reads in items.py / locations.py.
+    _UT_GEN_OPTION_KEYS: ClassVar = (
+        "goal", "sync_method", "user_defined_fights", "deathlink",
+        "killsanity", "questsanity", "containersanity",
+        "statsanity", "statsanity_boost_by",
+        "add_act1a_treasure", "add_act1b_treasure",
+        "add_act2_treasure", "add_act3_treasure",
+        "trim_treasure_method", "additional_level_ups",
+        "traps_percentage", "enabled_traps",
+    )
+
+    def generate_early(self) -> None:
+        # When generating inside Universal Tracker, the multiworld carries
+        # a `re_gen_passthrough` dict populated from `interpret_slot_data`.
+        # Pull the recorded option values back into `self.options` so the
+        # rest of generation (item pool, location filtering, rules) sees
+        # the same world the AP server actually rolled.
+        re_gen = getattr(self.multiworld, "re_gen_passthrough", None)
+        if not re_gen or self.game not in re_gen:
+            return
+        slot_data = re_gen[self.game]
+        for key in self._UT_GEN_OPTION_KEYS:
+            if key not in slot_data:
+                continue
+            opt = getattr(self.options, key, None)
+            if opt is None:
+                continue
+            setattr(self.options, key, opt.from_any(slot_data[key]))
+        # fill_slot_data renames "deathlink" -> "death_link" for client
+        # compatibility (Archipelago-standard slot_data key). Map it back
+        # to the option attribute when re-applying.
+        if "death_link" in slot_data:
+            self.options.deathlink = self.options.deathlink.from_any(
+                slot_data["death_link"]
+            )
+
+    @staticmethod
+    def interpret_slot_data(slot_data: Mapping[str, Any]) -> Mapping[str, Any]:
+        # Returning the dict (rather than mutating `self`) tells UT to
+        # do a re-generation pass with `re_gen_passthrough` populated.
+        # `generate_early` then loads the recorded options. See
+        # UniversalTracker/worlds/tracker/docs/apworld-integration.md
+        # "Generating without a YAML".
+        return slot_data
+
     # Our world class must have a static location_name_to_id and item_name_to_id defined.
     # We define these in regions.py and items.py respectively, so we just set them here.
     location_name_to_id = locations.LOCATION_NAME_TO_ID
@@ -73,9 +141,7 @@ class BG3World(World):
     # slot_data is just a dictionary using basic types, that will be converted to json when sent to the client.
     def fill_slot_data(self) -> Mapping[str, Any]:
         # If you need access to the player's chosen options on the client side, there is a helper for that.
-        slot_data = self.options.as_dict(
-            "goal", "sync_method", "user_defined_fights", "deathlink", "killsanity", "questsanity", "containersanity"#, "statsanity"
-        )
+        slot_data = self.options.as_dict(*self._UT_GEN_OPTION_KEYS)
         slot_data["death_link"] = slot_data.pop("deathlink")
         slot_data["seed_name"] = str(self.multiworld.seed_name)
         return slot_data
