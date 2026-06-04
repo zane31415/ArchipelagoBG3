@@ -29,8 +29,8 @@ from CommonClient import gui_enabled, logger, get_base_parser, ClientCommandProc
 wg_logger = logging.getLogger("WG")
 bugged_locations = ["Victory_Halsin", "Victory_Wwargaz", "Victory_Myrkul", "Bad_State"]
 bad_states = []
-act1bosses = ["Victory_Halsin", "Hag: Kill Auntie Ethel", "Village: Kill Well Spider Queen", "Underdark: Kill Spectator", "Underdark: Kill Bulette", "Grym: Kill Nere", "Forge: Kill Grym", "Victory_Wwargaz"]
-act2bosses = ["East Act 2: Kill Shambling Mound", "Reithwin: Kill Cursed Kuo-Toa Chief", "HoH: Kill Malus Thorm", "Tollhouse: Kill Gerringothe Thorm", "Brewery: Kill Thisobald Thorm", "Reithwin: Kill Ch'r'ai Tska'an", "Shar: Kill Yurgir", "Shar: Kill Balthazar", "Victory_Myrkul"]
+act1bosses = ["Victory_Halsin", "Hag: Kill Auntie Ethel", "Village: Kill Well Spider Queen", "Underdark: Kill Spectator", "Underdark: Kill Bulette", "Grym: Kill Nere", "Forge: Kill Grym", "Creche: Kill Ch'r'ai W'wargaz"]
+act2bosses = ["East Act 2: Kill Shambling Mound", "Reithwin: Kill Cursed Kuo-Toa Chief", "HoH: Kill Malus Thorm", "Tollhouse: Kill Gerringothe Thorm", "Brewery: Kill Thisobald Thorm", "Reithwin: Kill Ch'r'ai Tska'an", "Shar: Kill Yurgir", "Shar: Kill Balthazar", "Colony Showdown: Kill Myrkul"]
 goalbosses = act1bosses + act2bosses
 goal = -1
 bossmap = {
