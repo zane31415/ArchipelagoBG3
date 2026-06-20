@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable
 
-from BaseClasses import Entrance, Region
+from BaseClasses import Region
 
 if TYPE_CHECKING:
     from .world import BG3World
@@ -16,11 +16,77 @@ if TYPE_CHECKING:
 # Every location must be inside a region, and you must have at least one region.
 # This is why we create regions first, and then later we create the locations (in locations.py).
 
+_STATS = ["Strength", "Dexterity", "Constitution", "Intelligence", "Wisdom", "Charisma"]
+
+
+def _build_rule(
+    world: BG3World,
+    level_fragments: int = 0,
+    block_items: list[str] | None = None,
+    stats: int = 0,
+) -> Callable | None:
+    """Build an entrance access rule callable from level, block-item, and statsanity requirements.
+
+    Args:
+        level_fragments: Number of Level Fragment items required.
+        block_items: Items required only when the block_entrances option is enabled.
+        stats: Raw stat investment required per stat (divided by statsanity_boost_by for item count).
+    Returns None when there are no conditions so the caller can skip setting a rule.
+    """
+    player = world.player
+    checks = []
+
+    if level_fragments:
+        n = level_fragments
+        checks.append(lambda state, _n=n: state.has("Level Fragment", player, _n))
+
+    if block_items and world.options.block_entrances == 1:
+        if (block_items[0] == "Blighted Village"):
+            if (world.options.goal == world.options.goal.option_rescue_halsin):
+                checks.append(lambda state: state.has("Blighted Village Well", player))
+            else:
+                checks.append(lambda state: state.has("Underdark", player))
+        elif (block_items[0] == "Moonlight Towers"):
+            checks.append(lambda state: state.has("Progressive Moonlight Towers", player, 4))
+        elif (block_items[0] == "Mindflayer"):
+            checks.append(lambda state: state.has("Progressive Moonlight Towers", player, 5))
+        else:
+            for item in block_items:
+                checks.append(lambda state, _i=item: state.has(_i, player))
+
+    if stats:
+        count = stats / world.options.statsanity_boost_by
+        statsanity = world.options.statsanity
+        if (statsanity == statsanity.option_tav_only_stats
+                or statsanity == statsanity.option_universal_stats):
+            for stat in _STATS:
+                item_name = f"{stat} Stat Boost"
+                checks.append(lambda state, _i=item_name, _c=count: state.has(_i, player, _c))
+        elif statsanity == statsanity.option_party_slots:
+            for slot in range(1, 5):
+                for stat in _STATS:
+                    item_name = f"Slot {slot} {stat} Stat Boost"
+                    checks.append(lambda state, _i=item_name, _c=count: state.has(_i, player, _c))
+
+    if not checks:
+        return None
+    return lambda state: all(c(state) for c in checks)
+
+
+def _connect(source, dest, name, world: BG3World,
+             level_fragments: int = 0,
+             block_items: list[str] | None = None,
+             stats: int = 0) -> None:
+    rule = _build_rule(world, level_fragments, block_items, stats)
+    if rule is not None:
+        source.connect(dest, name, rule)
+    else:
+        source.connect(dest, name)
+
 
 def create_and_connect_regions(world: BG3World) -> None:
     create_all_regions(world)
     connect_regions(world)
-
 
 def create_all_regions(world: BG3World) -> None:
     # Creating a region is as simple as calling the constructor of the Region class.
@@ -61,10 +127,6 @@ def create_all_regions(world: BG3World) -> None:
 
 
 def connect_regions(world: BG3World) -> None:
-    # We have regions now, but still need to connect them to each other.
-    # But wait, we no longer have access to the region variables we created in create_all_regions()!
-    # Luckily, once you've submitted your regions to multiworld.regions,
-    # you can get them at any time using world.get_region(...).
     tutorial = world.get_region("Tutorial")
     beach = world.get_region("Beach")
     crypt = world.get_region("Crypt")
@@ -93,68 +155,30 @@ def connect_regions(world: BG3World) -> None:
     iron_throne = world.get_region("Iron Throne")
     netherbrain = world.get_region("Netherbrain")
 
-    stats_per_goal = 4 / world.options.statsanity_boost_by
-
-    tutorial.connect(beach, "Tutorial to Beach", lambda state: state.has("Level Fragment", world.player)) # Level 2
-    beach.connect(crypt, "Beach to Crypt")
-    beach.connect(grove, "Beach to Grove", lambda state: state.has("Level Fragment", world.player, 3)) # Level 3
-    beach.connect(blighted_village, "Beach to Blighted Village", lambda state: state.has("Level Fragment", world.player, 3)) # Level 3
-    blighted_village.connect(goblin_camp, "Blighted Village to Goblin Camp", lambda state: state.has("Level Fragment", world.player, 8)) # Level 4.5
-    if (world.options.statsanity == world.options.statsanity.option_off):
-        blighted_village.connect(hag, "Blighted Village to Hag", lambda state: state.has("Level Fragment", world.player, 10)) # Level 5
-    elif (world.options.statsanity == world.options.statsanity.option_tav_only_stats or world.options.statsanity == world.options.statsanity.option_universal_stats):
-        blighted_village.connect(hag, "Blighted Village to Hag", lambda state: state.has("Level Fragment", world.player, 10) \
-                                and state.has("Strength Stat Boost", world.player, 4 / world.options.statsanity_boost_by) \
-                                and state.has("Dexterity Stat Boost", world.player, 4 / world.options.statsanity_boost_by) \
-                                and state.has("Constitution Stat Boost", world.player, 4 / world.options.statsanity_boost_by) \
-                                and state.has("Intelligence Stat Boost", world.player, 4 / world.options.statsanity_boost_by) \
-                                and state.has("Wisdom Stat Boost", world.player, 4 / world.options.statsanity_boost_by) \
-                                and state.has("Charisma Stat Boost", world.player, 4 / world.options.statsanity_boost_by)) # Level 5
-    elif (world.options.statsanity == world.options.statsanity.option_party_slots):
-        blighted_village.connect(hag, "Blighted Village to Hag", lambda state: state.has("Level Fragment", world.player, 10) \
-                                and state.has("Slot 1 Strength Stat Boost", world.player, 4 / world.options.statsanity_boost_by) \
-                                and state.has("Slot 1 Dexterity Stat Boost", world.player, 4 / world.options.statsanity_boost_by) \
-                                and state.has("Slot 1 Constitution Stat Boost", world.player, 4 / world.options.statsanity_boost_by) \
-                                and state.has("Slot 1 Intelligence Stat Boost", world.player, 4 / world.options.statsanity_boost_by) \
-                                and state.has("Slot 1 Wisdom Stat Boost", world.player, 4 / world.options.statsanity_boost_by) \
-                                and state.has("Slot 1 Charisma Stat Boost", world.player, 4 / world.options.statsanity_boost_by) \
-                                and state.has("Slot 2 Strength Stat Boost", world.player, 4 / world.options.statsanity_boost_by) \
-                                and state.has("Slot 2 Dexterity Stat Boost", world.player, 4 / world.options.statsanity_boost_by) \
-                                and state.has("Slot 2 Constitution Stat Boost", world.player, 4 / world.options.statsanity_boost_by) \
-                                and state.has("Slot 2 Intelligence Stat Boost", world.player, 4 / world.options.statsanity_boost_by) \
-                                and state.has("Slot 2 Wisdom Stat Boost", world.player, 4 / world.options.statsanity_boost_by) \
-                                and state.has("Slot 2 Charisma Stat Boost", world.player, 4 / world.options.statsanity_boost_by) \
-                                and state.has("Slot 3 Strength Stat Boost", world.player, 4 / world.options.statsanity_boost_by) \
-                                and state.has("Slot 3 Dexterity Stat Boost", world.player, 4 / world.options.statsanity_boost_by) \
-                                and state.has("Slot 3 Constitution Stat Boost", world.player, 4 / world.options.statsanity_boost_by) \
-                                and state.has("Slot 3 Intelligence Stat Boost", world.player, 4 / world.options.statsanity_boost_by) \
-                                and state.has("Slot 3 Wisdom Stat Boost", world.player, 4 / world.options.statsanity_boost_by) \
-                                and state.has("Slot 3 Charisma Stat Boost", world.player, 4 / world.options.statsanity_boost_by) \
-                                and state.has("Slot 4 Strength Stat Boost", world.player, 4 / world.options.statsanity_boost_by) \
-                                and state.has("Slot 4 Dexterity Stat Boost", world.player, 4 / world.options.statsanity_boost_by) \
-                                and state.has("Slot 4 Constitution Stat Boost", world.player, 4 / world.options.statsanity_boost_by) \
-                                and state.has("Slot 4 Intelligence Stat Boost", world.player, 4 / world.options.statsanity_boost_by) \
-                                and state.has("Slot 4 Wisdom Stat Boost", world.player, 4 / world.options.statsanity_boost_by) \
-                                and state.has("Slot 4 Charisma Stat Boost", world.player, 4 / world.options.statsanity_boost_by)) # Level 5
-
-    blighted_village.connect(waukeen, "Blighted Village to Waukeen", lambda state: state.has("Level Fragment", world.player, 6)) # Level 4
+    _connect(tutorial, beach, "Tutorial to Beach", world, level_fragments=1, block_items=["Nautiloid Control Panel"]) # Level 2
+    _connect(beach, crypt, "Beach to Crypt", world, block_items=["Wither's Crypt"])
+    _connect(beach, grove, "Beach to Grove", world, level_fragments=3) # Level 3
+    _connect(beach, blighted_village, "Beach to Blighted Village", world, level_fragments=3, block_items=["Blighted Village"]) # Level 3
+    _connect(blighted_village, goblin_camp, "Blighted Village to Goblin Camp", world, level_fragments=8, block_items=["Goblin Camp"]) # Level 4.5
+    _connect(blighted_village, hag, "Blighted Village to Hag", world, level_fragments=10, stats=4, block_items=["Hag's Fireplace"]) # Level 5
+    _connect(blighted_village, waukeen, "Blighted Village to Waukeen", world, level_fragments=6, block_items=["Zhentarim Basement"]) # Level 4
 
     if (world.options.goal != world.options.goal.option_rescue_halsin):
-        goblin_camp.connect(underdark, "Goblin Camp to Underdark", lambda state: state.has("Level Fragment", world.player, 10)) # Level 5
-        underdark.connect(grymforge, "Underdark to Grymforge", lambda state: state.has("Level Fragment", world.player, 14)) # Level 6
-        blighted_village.connect(underdark, "Blighted Village to Underdark", lambda state: state.has("Level Fragment", world.player, 10)) # Level 5
-        blighted_village.connect(monastery, "Blighted Village to Monastery", lambda state: state.has("Level Fragment", world.player, 18)) # Level 7
-        monastery.connect(creche, "Monastery to Creche")
+        _connect(goblin_camp, underdark, "Goblin Camp to Underdark", world, level_fragments=10, block_items=["Underdark"]) # Level 5
+        _connect(underdark, grymforge, "Underdark to Grymforge", world, level_fragments=14, block_items=["Grymforge"]) # Level 6
+        _connect(blighted_village, underdark, "Blighted Village to Underdark", world, level_fragments=10, block_items=["Underdark"]) # Level 5
+        _connect(blighted_village, monastery, "Blighted Village to Monastery", world, level_fragments=18, block_items=["Goblin Camp", "Mountain Pass"]) # Level 7
+        _connect(monastery, creche, "Monastery to Creche", world, block_items=["Creche"])
 
-        if (world.options.goal != world.options.goal.option_kill_inquisitor_wwargaz 
+        if (world.options.goal != world.options.goal.option_kill_inquisitor_wwargaz
             and world.options.goal != world.options.goal.option_act1_user_defined_fights):
-            monastery.connect(east_act2, "Monastery to East Act 2", lambda state: state.has("Level Fragment", world.player, 22)) # Level 8
-            grymforge.connect(east_act2, "Grymforge to East Act 2", lambda state: state.has("Level Fragment", world.player, 22)) # Level 8
-            east_act2.connect(west_act2, "East Act 2 to West Act 2", lambda state: state.has("Level Fragment", world.player, 26)) # Level 9
-            east_act2.connect(last_light, "East Act 2 to Last Light Inn", lambda state: state.has("Level Fragment", world.player, 26)) # Level 9
-            west_act2.connect(moonrise, "West Act 2 to Moonrise Towers")
-            west_act2.connect(shar_gauntlet, "West Act 2 to Gauntlet of Shar")
-            moonrise.connect(mindflayer, "Moonrise Towers to Mindflayer Colony", lambda state: state.has("Level Fragment", world.player, 30)) # Level 10
+            _connect(monastery, east_act2, "Monastery to East Act 2", world, level_fragments=22, block_items=["Act 2"]) # Level 8
+            _connect(grymforge, east_act2, "Grymforge to East Act 2", world, level_fragments=22, block_items=["Goblin Camp", "Act 2"]) # Level 8
+            _connect(east_act2, west_act2, "East Act 2 to West Act 2", world, level_fragments=26, block_items=["Reithwin's Mason's Guild"]) # Level 9
+            _connect(east_act2, last_light, "East Act 2 to Last Light Inn", world, level_fragments=26, block_items=["Last Light Basement"]) # Level 9
+            _connect(west_act2, moonrise, "West Act 2 to Moonrise Towers", world, block_items=["Moonlight Towers"])
+            _connect(west_act2, shar_gauntlet, "West Act 2 to Gauntlet of Shar", world, block_items=["Underdark", "Grymforge", "Shar Trials"])
+            _connect(moonrise, mindflayer, "Moonrise Towers to Mindflayer Colony", world, level_fragments=30, block_items=["Mindflayer"]) # Level 10
 
             #if (world.options.goal != world.options.goal.option_kill_myrkul):
             #    mindflayer.connect(rivington, "Mindflayer Colony to Rivington")

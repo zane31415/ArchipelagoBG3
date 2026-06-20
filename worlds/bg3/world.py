@@ -64,7 +64,7 @@ class BG3World(World):
         "add_act1a_treasure", "add_act1b_treasure",
         "add_act2_treasure", "add_act3_treasure",
         "trim_treasure_method", "additional_level_ups",
-        "traps_percentage", "enabled_traps",
+        "traps_percentage", "enabled_traps", "block_entrances",
     )
 
     def generate_early(self) -> None:

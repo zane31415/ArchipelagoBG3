@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from Options import Choice, OptionGroup, PerGameCommonOptions, Range, Toggle, OptionSet, Visibility
+from Options import Choice, PerGameCommonOptions, Range, Toggle, OptionSet, Visibility
 
 class Goal(Choice):
     """
@@ -246,7 +246,12 @@ class EnabledTraps(OptionSet):
     display_name = "Enabled Trap List"
     default = {"Monster", "Bleeding", "Stun"}
 
-
+class BlockEntrances(Toggle):
+    """
+    If true, there will be barriers placed in the world that block advancement until a required item is received. This is currently in testing and may be buggy.
+    """
+    display_name = "Block Entrances"
+    default = False
 
 #class ObjectsAsChecks(Toggle):
 #    """
@@ -309,6 +314,7 @@ class BG3Options(PerGameCommonOptions):
     additional_level_ups: AdditionalLevelUps
     traps_percentage: TrapsPercentage
     enabled_traps: EnabledTraps
+    block_entrances: BlockEntrances
 #    objects_as_checks: ObjectsAsChecks
 #    feats_as_items: FeatsAsItems
 #    stats_as_items: StatsAsItems

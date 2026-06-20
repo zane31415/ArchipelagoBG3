@@ -66,6 +66,21 @@ ITEM_TUPLES = [
     ["Slot 4 Intelligence Boost", "Slot4IntStatBoost", 32, ItemClassification.progression, 0],
     ["Slot 4 Wisdom Boost", "Slot4WisStatBoost", 33, ItemClassification.progression, 0],
     ["Slot 4 Charisma Boost", "Slot4ChaStatBoost", 34, ItemClassification.progression, 0],
+    ["Nautiloid Control Panel", "Gate-ExitNautiloid", 100, ItemClassification.progression, 0],
+    ["Wither's Crypt", "Gate-WithersCrypt", 101, ItemClassification.progression, 0],
+    ["Blighted Village Well", "Gate-RuinedVillageWell", 102, ItemClassification.progression, 0],
+    ["Goblin Camp", "Gate-GoblinCamp", 103, ItemClassification.progression, 0],
+    ["Underdark", "Gate-Underdark", 104, ItemClassification.progression, 1],
+    ["Hag's Fireplace", "Gate-HagsFireplace", 105, ItemClassification.progression, 1],
+    ["Zhentarim Basement", "Gate-ZhentarimBasement", 106, ItemClassification.progression, 1],
+    ["Grymforge", "Gate-Grymforge", 107, ItemClassification.progression, 1],
+    ["Mountain Pass", "Gate-MountainPass", 108, ItemClassification.progression, 1],
+    ["Creche", "Gate-Creche", 109, ItemClassification.progression, 1],
+    ["Act 2", "Gate-Act2", 110, ItemClassification.progression, 2],
+    ["Last Light Basement", "Gate-LastLightBasement", 111, ItemClassification.progression, 2],
+    ["Reithwin's Mason's Guild", "Gate-ReithwinsMasonsGuild", 112, ItemClassification.progression, 2],
+    ["Shar Trials", "Gate-SharTrials", 113, ItemClassification.progression, 2],
+    ["Progressive Moonlight Towers", "Gate-ProgressiveMoonlightTowers", 114, ItemClassification.progression, 2],
     
 ] + [[item[0], item[1], index + 1000, ItemClassification.useful, item[2]] for index, item in enumerate(EQUIPMENT)] \
   + [[item[0], item[1], index + 5000, ItemClassification.filler, 0] for index, item in enumerate(FILLER_EQUIPMENT)] \
@@ -143,6 +158,30 @@ def create_all_items(world: BG3World) -> None:
     levelups_to_add = levelups_to_add + world.options.additional_level_ups
     itempool += [world.create_item("Level Fragment") for _ in range(levelups_to_add)]
     # Here we would add other progression items as we have them.
+    if (world.options.block_entrances == 1):
+        itempool += [world.create_item("Nautiloid Control Panel")]
+        itempool += [world.create_item("Wither's Crypt")]
+        itempool += [world.create_item("Goblin Camp")]
+        if (world.options.goal == world.options.goal.option_rescue_halsin):
+            itempool += [world.create_item("Blighted Village Well")]
+        else:
+            itempool += [world.create_item("Underdark")]
+            itempool += [world.create_item("Hag's Fireplace")]
+            itempool += [world.create_item("Zhentarim Basement")]
+            itempool += [world.create_item("Grymforge")]
+            itempool += [world.create_item("Mountain Pass")]
+            itempool += [world.create_item("Creche")]
+            if (world.options.goal != world.options.goal.option_kill_inquisitor_wwargaz and world.options.goal != world.options.goal.option_act1_user_defined_fights):
+                itempool += [world.create_item("Act 2")]
+                itempool += [world.create_item("Last Light Basement")]
+                itempool += [world.create_item("Reithwin's Mason's Guild")]
+                itempool += [world.create_item("Shar Trials")]
+                itempool += [world.create_item("Progressive Moonlight Towers")]
+                itempool += [world.create_item("Progressive Moonlight Towers")]
+                itempool += [world.create_item("Progressive Moonlight Towers")]
+                itempool += [world.create_item("Progressive Moonlight Towers")]
+                itempool += [world.create_item("Progressive Moonlight Towers")]
+            
     if (world.options.statsanity != world.options.statsanity.option_off):
         required_stat = 20
         if (world.options.goal == world.options.goal.option_rescue_halsin):
