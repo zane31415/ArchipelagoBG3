@@ -154,7 +154,7 @@ BG3_LOCATION_LIST = [
     ["DEN_Conflict-Murder_StartedAoD", [], 0],
     ["DEN_Conflict-SDCombatStarted", ["Grove-Kagha: Confront Kagha"], 0],
     ["DEN_Conflict-ZevlorDied", [], 0],
-    ["DEN_Conflict-ZevlorRewarded", ["Grove-Kagha: Return to Zevlor"], 0],
+    ["DEN_Conflict-ZevlorRewarded", [], 0],
     ["DEN_Conflict-ZevlorTalkedMurder", ["Grove-Kagha: Talk to Zevlor about Kagha"], 0],
     ["DEN_Conflict-FightBad", ["Grove-Kagha: Confront Kagha"], 0],
     ["DEN_Conflict-FightEndedBad", ["Grove-Kagha: Kill the Shadow Druids (tell Zevlor)"], 0],
