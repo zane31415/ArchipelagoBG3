@@ -253,6 +253,14 @@ class BlockEntrances(Toggle):
     display_name = "Block Entrances"
     default = False
 
+class DevDebugOn(Toggle):
+    """
+    If true, logs debug items in debug.json
+    """
+    visibility = Visibility.none
+    display_name = "DevDebugOn"
+    default = False
+
 #class ObjectsAsChecks(Toggle):
 #    """
 #    Makes all rare+ items into AP items. This adds more locations into the pool. Currently unimplemented.
@@ -315,6 +323,7 @@ class BG3Options(PerGameCommonOptions):
     traps_percentage: TrapsPercentage
     enabled_traps: EnabledTraps
     block_entrances: BlockEntrances
+    dev_debug_on: DevDebugOn
 #    objects_as_checks: ObjectsAsChecks
 #    feats_as_items: FeatsAsItems
 #    stats_as_items: StatsAsItems

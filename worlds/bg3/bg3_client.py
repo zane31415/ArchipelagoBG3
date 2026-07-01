@@ -216,10 +216,12 @@ class BG3Context(CommonContext):
             goldcounter = count()
             trapcounter = count()
             fillercounter = count()
+            progressivemoonlightcounter = count()
             received_items = [f"LevelUp<{next(levelcounter)}>" if item == "LevelUp" \
                               else f"{item}-{next(goldcounter)}" if item[:4] == "Gold" \
                               else f"{item}-2e51b930-c9fd-41f2-8013-02c92e990de2-{next(trapcounter)}" if item[:12] == "Trap-Monster" \
                               else f"{item}-{next(trapcounter)}" if item[:4] == "Trap" \
+                              else f"{item}-{next(progressivemoonlightcounter)}" if item == "Gate-ProgressiveMoonlightTowers" \
                               else f"Dupe-{next(fillercounter):04}-{item}" if IS_DUPEABLE.get(item, False) \
                               else item for item in received_items]
             path = os.path.join(self.se_bg3, self.seed_name + self.comm_file_sent_items)

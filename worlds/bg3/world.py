@@ -67,40 +67,6 @@ class BG3World(World):
         "traps_percentage", "enabled_traps", "block_entrances",
     )
 
-    def generate_early(self) -> None:
-        # When generating inside Universal Tracker, the multiworld carries
-        # a `re_gen_passthrough` dict populated from `interpret_slot_data`.
-        # Pull the recorded option values back into `self.options` so the
-        # rest of generation (item pool, location filtering, rules) sees
-        # the same world the AP server actually rolled.
-        re_gen = getattr(self.multiworld, "re_gen_passthrough", None)
-        if not re_gen or self.game not in re_gen:
-            return
-        slot_data = re_gen[self.game]
-        for key in self._UT_GEN_OPTION_KEYS:
-            if key not in slot_data:
-                continue
-            opt = getattr(self.options, key, None)
-            if opt is None:
-                continue
-            setattr(self.options, key, opt.from_any(slot_data[key]))
-        # fill_slot_data renames "deathlink" -> "death_link" for client
-        # compatibility (Archipelago-standard slot_data key). Map it back
-        # to the option attribute when re-applying.
-        if "death_link" in slot_data:
-            self.options.deathlink = self.options.deathlink.from_any(
-                slot_data["death_link"]
-            )
-
-    @staticmethod
-    def interpret_slot_data(slot_data: Mapping[str, Any]) -> Mapping[str, Any]:
-        # Returning the dict (rather than mutating `self`) tells UT to
-        # do a re-generation pass with `re_gen_passthrough` populated.
-        # `generate_early` then loads the recorded options. See
-        # UniversalTracker/worlds/tracker/docs/apworld-integration.md
-        # "Generating without a YAML".
-        return slot_data
-
     # Our world class must have a static location_name_to_id and item_name_to_id defined.
     # We define these in regions.py and items.py respectively, so we just set them here.
     location_name_to_id = locations.LOCATION_NAME_TO_ID
@@ -111,29 +77,24 @@ class BG3World(World):
     origin_region_name = "Tutorial"
 
     def generate_early(self) -> None:
-        # When generating inside Universal Tracker, the multiworld carries
-        # a `re_gen_passthrough` dict populated from `interpret_slot_data`.
-        # Pull the recorded option values back into `self.options` so the
-        # rest of generation (item pool, location filtering, rules) sees
-        # the same world the AP server actually rolled.
+        # UT re-gen passthrough: restore options recorded in slot_data.
         re_gen = getattr(self.multiworld, "re_gen_passthrough", None)
-        if not re_gen or self.game not in re_gen:
-            return
-        slot_data = re_gen[self.game]
-        for key in self._UT_GEN_OPTION_KEYS:
-            if key not in slot_data:
-                continue
-            opt = getattr(self.options, key, None)
-            if opt is None:
-                continue
-            setattr(self.options, key, opt.from_any(slot_data[key]))
-        # fill_slot_data renames "deathlink" -> "death_link" for client
-        # compatibility (Archipelago-standard slot_data key). Map it back
-        # to the option attribute when re-applying.
-        if "death_link" in slot_data:
-            self.options.deathlink = self.options.deathlink.from_any(
-                slot_data["death_link"]
-            )
+        if re_gen and self.game in re_gen:
+            slot_data = re_gen[self.game]
+            for key in self._UT_GEN_OPTION_KEYS:
+                if key not in slot_data:
+                    continue
+                opt = getattr(self.options, key, None)
+                if opt is None:
+                    continue
+                setattr(self.options, key, opt.from_any(slot_data[key]))
+            if "death_link" in slot_data:
+                self.options.deathlink = self.options.deathlink.from_any(
+                    slot_data["death_link"]
+                )
+
+        if self.options.block_entrances == 1:
+            self.multiworld.early_items[self.player]["Nautiloid Control Panel"] = 1
 
     @staticmethod
     def interpret_slot_data(slot_data: Mapping[str, Any]) -> Mapping[str, Any]:
