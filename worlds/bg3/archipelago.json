@@ -1,8 +1,8 @@
 {
     "game": "Baldur's Gate 3",
     "authors": ["Broney"],
-    "world_version": "0.5.0",
+    "world_version": "0.6.0",
     "minimum_ap_version": "0.6.2",
-    "version": 4,
-    "compatible_version": 2
+    "version": 5,
+    "compatible_version": 5
 }

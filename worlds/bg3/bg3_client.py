@@ -165,6 +165,21 @@ class BG3Context(CommonContext):
             for file in files:
                 os.remove(root + "/" + file)
 
+    @staticmethod
+    def apply_item_suffixes(received_items: List[str]) -> List[str]:
+        levelcounter = count()
+        goldcounter = count()
+        trapcounter = count()
+        fillercounter = count()
+        progressivemoonlightcounter = count()
+        return [f"LevelUp<{next(levelcounter)}>" if item == "LevelUp"
+                else f"{item}-{next(goldcounter)}" if item[:4] == "Gold"
+                else f"{item}-2e51b930-c9fd-41f2-8013-02c92e990de2-{next(trapcounter)}" if item[:12] == "Trap-Monster"
+                else f"{item}-{next(trapcounter)}" if item[:4] == "Trap"
+                else f"{item}-{next(progressivemoonlightcounter)}" if item == "Gate-ProgressiveMoonlightTowers"
+                else f"Dupe-{next(fillercounter):04}-{item}" if IS_DUPEABLE.get(item, False)
+                else item for item in received_items]
+
     def run_gui(self):
         from kvui import GameManager
 
@@ -200,8 +215,7 @@ class BG3Context(CommonContext):
             with open(sync_option_path, 'w') as f:
                 json.dump(slot_data, f)
             received_items = [AP_ITEM_TO_BG3_ID[self.item_names.lookup_in_game(network_item.item)] for network_item in self.items_received]
-            counter = count()
-            received_items = [f"LevelUp<{next(counter)}>" if item == "LevelUp" else item for item in received_items]
+            received_items = self.apply_item_suffixes(received_items)
             path = os.path.join(self.se_bg3, self.seed_name + self.comm_file_sent_items)
             with open(path, 'w') as f:
                 json.dump(received_items, f)
@@ -212,18 +226,7 @@ class BG3Context(CommonContext):
 
         if cmd in {"ReceivedItems"}:
             received_items = [AP_ITEM_TO_BG3_ID[self.item_names.lookup_in_game(network_item.item)] for network_item in self.items_received]
-            levelcounter = count()
-            goldcounter = count()
-            trapcounter = count()
-            fillercounter = count()
-            progressivemoonlightcounter = count()
-            received_items = [f"LevelUp<{next(levelcounter)}>" if item == "LevelUp" \
-                              else f"{item}-{next(goldcounter)}" if item[:4] == "Gold" \
-                              else f"{item}-2e51b930-c9fd-41f2-8013-02c92e990de2-{next(trapcounter)}" if item[:12] == "Trap-Monster" \
-                              else f"{item}-{next(trapcounter)}" if item[:4] == "Trap" \
-                              else f"{item}-{next(progressivemoonlightcounter)}" if item == "Gate-ProgressiveMoonlightTowers" \
-                              else f"Dupe-{next(fillercounter):04}-{item}" if IS_DUPEABLE.get(item, False) \
-                              else item for item in received_items]
+            received_items = self.apply_item_suffixes(received_items)
             path = os.path.join(self.se_bg3, self.seed_name + self.comm_file_sent_items)
             with open(path, 'w') as f:
                 json.dump(received_items, f)
