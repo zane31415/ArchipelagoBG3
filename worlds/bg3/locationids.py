@@ -952,7 +952,7 @@ LOCATION_NAME_ID_REGION = [["Tut: Learn about the Helm", 1, "tutorial"],
     ["Colony Showdown: Kill Myrkul", 10647,"mindflayer"],
     ["Colony: Kill Kressa Bonedaughter", 10648,"mindflayer"],
 
-    // TODO: act 3
+    # TODO: act 3
 ]
 
 LOCATION_NAME_TO_ID = {item[0]: item[1] for item in LOCATION_NAME_ID_REGION}
