@@ -13,8 +13,9 @@ class Goal(Choice):
     Act 1 user defined fights: Level Cap 8 - goal is to defeat selected bosses (see UserDefinedFights).
     Kill Myrkul: Level Cap 10 - goal is to kill the Avatar of Myrkul at the end of Act 2.
     Act 2 user defined fights: Level Cap 10 - goal is to defeat selected bosses (see UserDefinedFights).
+    Kill the Nether Brain: Level Cap 12 - goal is to kill the Nether Brain at the end of Act 3. UNTESTED.
+    Act 3 user defined fights: Level Cap 12 - goal is to defeat selected bosses (see UserDefinedFights). UNTESTED.
     """
-    #Kill the Nether Brain: Level Cap 12 - goal is to kill the Nether Brain at the end of Act 3.
 
     display_name = "Goal"
 
@@ -23,7 +24,8 @@ class Goal(Choice):
     option_act1_user_defined_fights = 2
     option_kill_myrkul = 3
     option_act2_user_defined_fights = 4
-    #option_kill_nether_brain = 3
+    option_kill_nether_brain = 5
+    option_act3_user_defined_fights = 6
 
     default = option_rescue_halsin
 
@@ -31,6 +33,8 @@ class UserDefinedFights(OptionSet):
     """
     If using a User Defined Fights goal, select which fights are required to complete the goal.
     Act 2 fights require the act2_user_defined_fights goal to be selected.
+    Act 3 fights require the act3_user_defined_fights goal to be selected.
+    Act 1 fights are Auntie Ethel - Ch'r'ai W'wargaz, Act 2 fights are Shambling Mound - Myrkul, Act 3 fights are everything past Myrkul.
     """
     valid_keys = [
         "Auntie Ethel",
@@ -73,9 +77,9 @@ class KillSanity(Choice):
     Whether kills of individual creatures should be locations.
     Kills do _not_ count if they are done by falling damage or by being thrown into a chasm.
     
-    All_Nonmissible_hostiles: The intent was all monsters that are either default or story-forced hostile, and are not likely to be missed by advancing plot.
-    Include_Missible_Bosses: Includes bosses that could be bypassed or missed. Failing to kill one could softlock the player. Save often.
-        Examples: Nere, All the Thorms, later waves of Thaniel's summons.
+    Currently the only option is "All Nonmissable Hostiles" -  The intent was all monsters that are either default or story-forced hostile,
+    and are not likely to be missed by advancing plot. There still do exist some fights that are technically missable (paladins, Nere, etc), but
+    only by transitions that have explicit warnings on them.
 
     Nonmissable Hostiles Location count - Halsin: ~140, Wwargaz: ~250
     """
@@ -108,6 +112,7 @@ class ContainerSanity(Choice):
     Whether opening containers should be locations. Currently unimplemented and exists only for testing.
     Even if it was, don't do this.
     """
+    visibility = Visibility.none
     display_name = "Containersanity"
     option_off = 0
     option_no_really_dont_do_this = 1
@@ -121,6 +126,7 @@ class StatSanity(Choice):
     Tav only stats: Only Tav's stats are randomized, and the companions' stats are left alone.
     Party slots: Stats are only applied to party slots, and not the characters. Rearranging the party will rearrange stats.
     Universal stats: Stats are not character specific, and all characters get the same stat boosts when a stat item is received.
+    Character stats: Stats are character specific, and each character's stats are randomized separately.
     """
     visibility = Visibility.none
     display_name = "Statsanity"
@@ -128,6 +134,7 @@ class StatSanity(Choice):
     option_tav_only_stats = 1
     option_party_slots = 2
     option_universal_stats = 3
+    option_character_stats = 4
     default = option_off
 
 class StatSanityBoostBy(Range):
@@ -147,6 +154,7 @@ class StatSanityBoostBy(Range):
 
 #class CharactersInLogic(OptionSet):
 #    """
+#    Which characters the generator should assume you will recruit.
 #    If Statsanity is on, determines which characters' stats are included in logic.
 #    If Questsanity is on, determines which characters' quest completions are included in logic.
 #    Currently in testing.

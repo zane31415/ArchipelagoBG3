@@ -185,7 +185,50 @@ def create_regular_locations(world: BG3World) -> None:
                     mindflayer_location_names.append(loc[0])
             mindflayer_locations = get_location_names_with_ids(mindflayer_location_names)
             mindflayer.add_locations(mindflayer_locations, BG3Location)
+            
+            if (world.options.goal != world.options.goal.option_kill_myrkul 
+            and world.options.goal != world.options.goal.option_act2_user_defined_fights):
+                rivington_location_names = []
+                for loc in LOCATION_NAME_ID_REGION:
+                    if (loc[2] == 'rivington' and ((loc[1] < 10000 and world.options.questsanity == 1) or (loc[1] >= 10000 and world.options.killsanity == 1))):
+                        rivington_location_names.append(loc[0])
+                rivington_location = get_location_names_with_ids(rivington_location_names)
+                rivington.add_locations(rivington_location, BG3Location)
 
+                wyrms_crossing_location_names = []
+                for loc in LOCATION_NAME_ID_REGION:
+                    if (loc[2] == 'wyrms_crossing' and ((loc[1] < 10000 and world.options.questsanity == 1) or (loc[1] >= 10000 and world.options.killsanity == 1))):
+                        wyrms_crossing_location_names.append(loc[0])
+                wyrms_crossing_location = get_location_names_with_ids(wyrms_crossing_location_names)
+                wyrms_crossing.add_locations(wyrms_crossing_location, BG3Location)
+
+                lower_city_location_names = []
+                for loc in LOCATION_NAME_ID_REGION:
+                    if (loc[2] == 'lower_city' and ((loc[1] < 10000 and world.options.questsanity == 1) or (loc[1] >= 10000 and world.options.killsanity == 1))):
+                        lower_city_location_names.append(loc[0])
+                lower_city_location = get_location_names_with_ids(lower_city_location_names)
+                lower_city.add_locations(lower_city_location, BG3Location)
+
+                lower_city_sewers_location_names = []
+                for loc in LOCATION_NAME_ID_REGION:
+                    if (loc[2] == 'lower_city_sewers' and ((loc[1] < 10000 and world.options.questsanity == 1) or (loc[1] >= 10000 and world.options.killsanity == 1))):
+                        lower_city_sewers_location_names.append(loc[0])
+                lower_city_sewers_location = get_location_names_with_ids(lower_city_sewers_location_names)
+                lower_city_sewers.add_locations(lower_city_sewers_location, BG3Location)
+
+                iron_throne_location_names = []
+                for loc in LOCATION_NAME_ID_REGION:
+                    if (loc[2] == 'iron_throne' and ((loc[1] < 10000 and world.options.questsanity == 1) or (loc[1] >= 10000 and world.options.killsanity == 1))):
+                        iron_throne_location_names.append(loc[0])
+                iron_throne_location = get_location_names_with_ids(iron_throne_location_names)
+                iron_throne.add_locations(iron_throne_location, BG3Location)
+
+                netherbrain_location_names = []
+                for loc in LOCATION_NAME_ID_REGION:
+                    if (loc[2] == 'netherbrain' and ((loc[1] < 10000 and world.options.questsanity == 1) or (loc[1] >= 10000 and world.options.killsanity == 1))):
+                        netherbrain_location_names.append(loc[0])
+                netherbrain_location = get_location_names_with_ids(netherbrain_location_names)
+                netherbrain.add_locations(netherbrain_location, BG3Location)
 
 
     if (world.options.goal == world.options.goal.option_rescue_halsin):
@@ -196,5 +239,11 @@ def create_regular_locations(world: BG3World) -> None:
         creche.add_event("Victory_All_Bosses", "Victory", location_type=BG3Location, item_type=items.BG3Item)
     elif (world.options.goal == world.options.goal.option_act2_user_defined_fights):
         mindflayer.add_event("Victory_All_Bosses", "Victory", location_type=BG3Location, item_type=items.BG3Item)
+    elif (world.options.goal == world.options.goal.option_act3_user_defined_fights):
+        # FIXME: 76473a58 lumped act3 in with act1; kept as-is through the rebase rather
+        # than changed silently, but creche is an Act 1 region - netherbrain looks intended.
+        creche.add_event("Victory_All_Bosses", "Victory", location_type=BG3Location, item_type=items.BG3Item)
     elif (world.options.goal == world.options.goal.option_kill_myrkul):
         mindflayer.add_event("Victory_Myrkul", "Victory", location_type=BG3Location, item_type=items.BG3Item)
+    elif (world.options.goal == world.options.goal.option_kill_netherbrain):
+        netherbrain.add_event("Victory_Netherbrain", "Victory", location_type=BG3Location, item_type=items.BG3Item)

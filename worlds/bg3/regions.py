@@ -180,10 +180,10 @@ def connect_regions(world: BG3World) -> None:
             _connect(west_act2, shar_gauntlet, "West Act 2 to Gauntlet of Shar", world, block_items=["Underdark", "Grymforge", "Shar Trials"])
             _connect(moonrise, mindflayer, "Moonrise Towers to Mindflayer Colony", world, level_fragments=30, block_items=["Mindflayer"]) # Level 10
 
-            #if (world.options.goal != world.options.goal.option_kill_myrkul):
-            #    mindflayer.connect(rivington, "Mindflayer Colony to Rivington")
-            #    rivington.connect(wyrms_crossing, "Rivington to Wyrm's Crossing")
-            #    wyrms_crossing.connect(lower_city, "Wyrm's Crossing to Lower City", lambda state: state.has("Level Fragment", world.player, 10))
-            #    lower_city.connect(lower_city_sewers, "Lower City to Lower City Sewers")
-            #    lower_city.connect(iron_throne, "Lower City to Iron Throne")
-            #    lower_city.connect(netherbrain, "Lower City to Netherbrain", lambda state: state.has("Level Fragment", world.player, 11))
+            if (world.options.goal != world.options.goal.option_kill_myrkul):
+                _connect(mindflayer, rivington, "Mindflayer Colony to Rivington", world, block_items=["Rivington"])
+                _connect(rivington, wyrms_crossing, "Rivington to Wyrm's Crossing", world, block_items=["Wyrm's Crossing"])
+                _connect(wyrms_crossing, lower_city, "Wyrm's Crossing to Lower City", world, level_fragments=34, block_items=["Lower City"])
+                _connect(lower_city, lower_city_sewers, "Lower City to Lower City Sewers", world, block_items=["Lower City Sewers"])
+                _connect(lower_city, iron_throne, "Lower City to Iron Throne", world, block_items=["Iron Throne"])
+                _connect(lower_city, netherbrain, "Lower City to Netherbrain", world, level_fragments=38, block_items=["Netherbrain"])

@@ -152,8 +152,8 @@ def create_all_items(world: BG3World) -> None:
         levelups_to_add = 22 # To reach level 8
     elif (world.options.goal == world.options.goal.option_kill_myrkul or world.options.goal == world.options.goal.option_act2_user_defined_fights):
         levelups_to_add = 30 # To reach level 10
-#    elif (world.options.goal == world.options.goal.option_kill_nether_brain):
-#        levelups_to_add = 38 # To reach level 12
+    elif (world.options.goal == world.options.goal.option_kill_nether_brain or world.options.goal == world.options.goal.option_act3_user_defined_fights):
+        levelups_to_add = 38 # To reach level 12
 
     levelups_to_add = levelups_to_add + world.options.additional_level_ups
     itempool += [world.create_item("Level Fragment") for _ in range(levelups_to_add)]
@@ -181,6 +181,9 @@ def create_all_items(world: BG3World) -> None:
                 itempool += [world.create_item("Progressive Moonlight Towers")]
                 itempool += [world.create_item("Progressive Moonlight Towers")]
                 itempool += [world.create_item("Progressive Moonlight Towers")]
+                if (world.options.goal != world.options.goal.option_kill_myrkul and world.options.goal != world.options.goal.option_act2_user_defined_fights):
+                    itempool += [world.create_item("Act 3")]
+           
             
     if (world.options.statsanity != world.options.statsanity.option_off):
         required_stat = 20
