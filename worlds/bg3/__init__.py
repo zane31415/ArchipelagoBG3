@@ -1,4 +1,4 @@
-from worlds.LauncherComponents import Component, Type, components, launch
+from worlds.LauncherComponents import Component, SuffixIdentifier, Type, components, launch
 
 from .world import BG3World as BG3World
 
@@ -33,5 +33,9 @@ components.append(
         game_name="Baldur's Gate 3",
         component_type=Type.CLIENT,
         supports_uri=True,
+        # Double-clicking the .apbg3 connect file (emitted at generation)
+        # routes to THIS client with the slot pre-filled - the fix for people
+        # launching the Text Client and wondering where their items went.
+        file_identifier=SuffixIdentifier(".apbg3"),
     )
 )

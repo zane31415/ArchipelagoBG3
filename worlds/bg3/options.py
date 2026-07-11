@@ -181,11 +181,13 @@ class AdditionalLevelUps(Range):
 
 class SyncMethod(Choice):
     """
-    Determines how AP items will be delivered into BG3. All options will still have the AP Sync scroll, it just will be a No-op if not needed.
+    Determines how AP items will be delivered into BG3.
+    With a current mod and client, items are delivered automatically within about a second regardless
+    of this choice, and the AP Sync scroll remains as a manual "force a sync now" button.
+    This option only changes behavior with an OLD mod version (no sync timer):
     Scroll_Tav - Items will only be generated when the scroll is cast, and placed in Tav's inventory.
     Any_action_Tav - Items will be generated when ANYBODY takes ANY action that the game considers worth triggering the listener flag for
-        (which is most things). Items will be given to the character currently being controlled.
-        This may (will likely) cause encumbrance issues, potentially even during combat.
+        (which is most things).
     """
 
     display_name = "SyncMethod"
@@ -248,7 +250,8 @@ class TrapsPercentage(Range):
 class EnabledTraps(OptionSet):
     """
     Which kinds of traps should be enabled. Currently monster spawns do not scale to level.
-    Any trap not enabled by default is experimental and may be buggy.
+    Only Monster, Bleeding and Stun are implemented by the game mod right now; the others
+    are stripped from the pool at generation (with a warning) until the mod supports them.
     """
     valid_keys = ["Monster", "Bleeding", "Stun", "Confusion", "Sussur", "Clown", "Overburdened"]
     display_name = "Enabled Trap List"

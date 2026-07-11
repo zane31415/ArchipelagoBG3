@@ -1,3 +1,5 @@
+import json
+import os
 from collections.abc import Mapping
 from typing import Any, ClassVar
 
@@ -140,3 +142,19 @@ class BG3World(World):
         slot_data["death_link"] = slot_data.pop("deathlink")
         slot_data["seed_name"] = str(self.multiworld.seed_name)
         return slot_data
+
+    def generate_output(self, output_directory: str) -> None:
+        # Emit a .apbg3 connect file next to the other seed output. The
+        # Launcher routes it to the BG3 client (see the SuffixIdentifier on
+        # the Component), which pre-fills the slot name from it. "server" is
+        # null at generation time - the room address isn't known yet - and is
+        # left for the client to ask for.
+        connect_info = {
+            "server": None,
+            "player": self.multiworld.get_player_name(self.player),
+            "seed": str(self.multiworld.seed_name),
+            "game": self.game,
+        }
+        file_name = f"{self.multiworld.get_out_file_name_base(self.player)}.apbg3"
+        with open(os.path.join(output_directory, file_name), "w") as f:
+            json.dump(connect_info, f)

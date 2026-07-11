@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from typing import TYPE_CHECKING
 
 from BaseClasses import Item, ItemClassification
@@ -14,6 +15,10 @@ FILLER_EQUIPMENT = [
     ["Supply Pack", "a24a2ca2-a213-424c-833d-47c79934c0ce"],
     ["Trap Disarm Pack", "22c74b5e-bef2-41b1-b9ed-f4acc766d4ee"],
     ["Is that blood? No, nevermind.", "809f228e-8d2b-46b8-8a33-51181505bc61"],
+    # Gold wire format is "Gold-<digits>" (the client appends "-n" to make
+    # each copy unique). Historically the mod parsed exactly six zero-padded
+    # digits; current mod versions accept any digit count, but keep padding
+    # to six so old mods still grant the right amount.
     ["100 Gold", "Gold-000100"],
     ["200 Gold", "Gold-000200"],
     ["Potion of Healing", "d47006e9-8a51-453d-b200-9e0d42e9bbab"],
@@ -28,6 +33,20 @@ TRAP_OPTIONS = [
     ["Clown Trap", "Trap-Clown"],
     ["Overburdened Trap", "Trap-Overburdened"]
 ]
+
+# Traps the game mod actually implements. The others are silently consumed
+# with no effect by the mod's Lua, so generation strips them from the pool
+# (with a warning) rather than handing out items that do nothing.
+IMPLEMENTED_TRAPS = {"Monster", "Bleeding", "Stun"}
+TRAP_KEY_TO_ITEM_NAME = {
+    "Monster": "Monster Spawn Trap",
+    "Bleeding": "Bleeding Trap",
+    "Stun": "Stunned Trap",
+    "Confusion": "Confusion Trap",
+    "Sussur": "Sussur Trap",
+    "Clown": "Clown Trap",
+    "Overburdened": "Overburdened Trap",
+}
 
 #[game item name, id in BG3, int id in AP, classification, filter level]
 # Filter levels: 0 (pre-Halsin), 1 (Act 1), 2 (Act 2), 3 (Act 3)
@@ -106,27 +125,11 @@ class BG3Item(Item):
 # For now, let's make a function that returns the name of a random filler item here in items.py.
 def get_random_filler_item_name(world: BG3World) -> str:
     if (world.random.randint(0, 100) < world.options.traps_percentage):
-        trap_count = 0
-        traps = []
-        for trap in world.options.enabled_traps:
-            trap_count = trap_count + 1
-            traps.append(trap)
-        index = world.random.randint(0, trap_count - 1)
-        trap = traps[index]
-        if (trap == "Monster"):
-            return TRAP_OPTIONS[0][0]
-        if (trap == "Bleeding"):
-            return TRAP_OPTIONS[1][0]
-        if (trap == "Stun"):
-            return TRAP_OPTIONS[2][0]
-        if (trap == "Confusion"):
-            return TRAP_OPTIONS[3][0]
-        if (trap == "Sussur"):
-            return TRAP_OPTIONS[4][0]
-        if (trap == "Clown"):
-            return TRAP_OPTIONS[5][0]
-        if (trap == "Overburdened"):
-            return TRAP_OPTIONS[6][0]
+        traps = sorted(trap for trap in world.options.enabled_traps if trap in IMPLEMENTED_TRAPS)
+        if traps:
+            trap = traps[world.random.randint(0, len(traps) - 1)]
+            return TRAP_KEY_TO_ITEM_NAME[trap]
+        # All enabled traps are unimplemented: fall through to normal filler.
     index = world.random.randint(0, len(FILLER_EQUIPMENT) - 1)
     return FILLER_EQUIPMENT[index][0]
 
@@ -144,6 +147,13 @@ def create_item_with_correct_classification(world: BG3World, name: str) -> BG3It
 # With those two helper functions defined, let's now get to actually creating and submitting our itempool.
 def create_all_items(world: BG3World) -> None:
     # First, we create a list containing all the items that always exist.
+
+    if world.options.traps_percentage > 0:
+        unimplemented = sorted(t for t in world.options.enabled_traps if t not in IMPLEMENTED_TRAPS)
+        if unimplemented:
+            logging.warning(
+                f"BG3 ({world.player_name}): enabled traps {unimplemented} are not implemented "
+                f"by the game mod yet and will not be added to the pool.")
 
     itempool: list[Item] = []
 
