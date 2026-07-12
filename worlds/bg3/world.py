@@ -62,7 +62,7 @@ class BG3World(World):
     _UT_GEN_OPTION_KEYS: ClassVar = (
         "goal", "sync_method", "user_defined_fights", "deathlink",
         "killsanity", "questsanity", "containersanity",
-        "statsanity", "statsanity_boost_by",
+        "statsanity", "statsanity_boost_by", "characters_in_logic",
         "add_act1a_treasure", "add_act1b_treasure",
         "add_act2_treasure", "add_act3_treasure",
         "trim_treasure_method", "additional_level_ups",

@@ -152,16 +152,20 @@ class StatSanityBoostBy(Range):
     range_end = 8
     default = 2
 
-#class CharactersInLogic(OptionSet):
-#    """
-#    Which characters the generator should assume you will recruit.
-#    If Statsanity is on, determines which characters' stats are included in logic.
-#    If Questsanity is on, determines which characters' quest completions are included in logic.
-#    Currently in testing.
-#    """
-#    valid_keys = ["Astarion", "Gale", "Karlach", "Lae'zel", "Shadowheart", "Wyll", "Halsin", "Minthara"]
-#    display_name = "Characters in Logic"
-#    default = {"Astarion", "Gale", "Karlach", "Lae'zel", "Shadowheart", "Wyll", "Halsin", "Minthara"}
+class CharactersInLogic(OptionSet):
+    """
+    Which characters the generator should assume you will recruit.
+    A character NOT listed here has their character-specific plot events removed from the
+    location pool: locations named "<Character>: ..." and any "Recruit <Character>" location
+    (e.g. removing Lae'zel drops "Lae'zel: Deal with Patrol" and "Beach-LZ: Recruit Lae'zel").
+    Other locations that merely depend on a character are not yet auto-detected.
+    If Statsanity is on, determines which characters' stats are included in logic.
+    If Questsanity is on, determines which characters' quest completions are included in logic.
+    Currently in testing.
+    """
+    valid_keys = ["Astarion", "Gale", "Karlach", "Lae'zel", "Shadowheart", "Wyll", "Halsin", "Minthara"]
+    display_name = "Characters in Logic"
+    default = {"Astarion", "Gale", "Karlach", "Lae'zel", "Shadowheart", "Wyll", "Halsin", "Minthara"}
 
 class Deathlink(Toggle):
     """
@@ -322,7 +326,7 @@ class BG3Options(PerGameCommonOptions):
     containersanity: ContainerSanity
     statsanity: StatSanity
     statsanity_boost_by: StatSanityBoostBy
-#    characters_in_logic: CharactersInLogic
+    characters_in_logic: CharactersInLogic
     deathlink: Deathlink
     sync_method: SyncMethod
     add_act1a_treasure: AddAct1ATreasure

@@ -28,6 +28,18 @@ def create_all_locations(world: BG3World) -> None:
 
 
 def create_regular_locations(world: BG3World) -> None:
+    # Character-gating: each locationids row carries a 4th field, a list of
+    # character tags. A location tagged with a character the player left out of
+    # CharactersInLogic is not created here. Untagged locations (empty list)
+    # are always kept. Note LOCATION_NAME_TO_ID stays the FULL set on purpose,
+    # so the client can still map a game event to a location it simply doesn't
+    # have this game and move on -- no error.
+    in_logic = set(world.options.characters_in_logic.value)
+    allowed_locs = [
+        loc for loc in LOCATION_NAME_ID_REGION
+        if all(tag in in_logic for tag in (loc[3] if len(loc) > 3 else []))
+    ]
+
     tutorial = world.get_region("Tutorial")
     beach = world.get_region("Beach")
     crypt = world.get_region("Crypt")
@@ -56,56 +68,56 @@ def create_regular_locations(world: BG3World) -> None:
     netherbrain = world.get_region("Netherbrain")
 
     tutorial_location_names = []
-    for loc in LOCATION_NAME_ID_REGION:
+    for loc in allowed_locs:
         if (loc[2] == 'tutorial' and ((loc[1] < 10000 and world.options.questsanity == 1) or (loc[1] >= 10000 and world.options.killsanity == 1))):
             tutorial_location_names.append(loc[0])
     tutorial_locations = get_location_names_with_ids(tutorial_location_names)
     tutorial.add_locations(tutorial_locations, BG3Location)
 
     beach_location_names = []
-    for loc in LOCATION_NAME_ID_REGION:
+    for loc in allowed_locs:
         if (loc[2] == 'beach' and ((loc[1] < 10000 and world.options.questsanity == 1) or (loc[1] >= 10000 and world.options.killsanity == 1))):
             beach_location_names.append(loc[0])
     beach_locations = get_location_names_with_ids(beach_location_names)
     beach.add_locations(beach_locations, BG3Location)
 
     crypt_location_names = []
-    for loc in LOCATION_NAME_ID_REGION:
+    for loc in allowed_locs:
         if (loc[2] == 'crypt' and ((loc[1] < 10000 and world.options.questsanity == 1) or (loc[1] >= 10000 and world.options.killsanity == 1))):
             crypt_location_names.append(loc[0])
     crypt_locations = get_location_names_with_ids(crypt_location_names)
     crypt.add_locations(crypt_locations, BG3Location)
 
     grove_location_names = []
-    for loc in LOCATION_NAME_ID_REGION:
+    for loc in allowed_locs:
         if (loc[2] == 'grove' and ((loc[1] < 10000 and world.options.questsanity == 1) or (loc[1] >= 10000 and world.options.killsanity == 1))):
             grove_location_names.append(loc[0])
     grove_locations = get_location_names_with_ids(grove_location_names)
     grove.add_locations(grove_locations, BG3Location)
 
     blighted_village_location_names = []
-    for loc in LOCATION_NAME_ID_REGION:
+    for loc in allowed_locs:
         if (loc[2] == 'blighted_village' and ((loc[1] < 10000 and world.options.questsanity == 1) or (loc[1] >= 10000 and world.options.killsanity == 1))):
             blighted_village_location_names.append(loc[0])
     blighted_village_locations = get_location_names_with_ids(blighted_village_location_names)
     blighted_village.add_locations(blighted_village_locations, BG3Location)
 
     goblin_camp_location_names = []
-    for loc in LOCATION_NAME_ID_REGION:
+    for loc in allowed_locs:
         if (loc[2] == 'goblin_camp' and ((loc[1] < 10000 and world.options.questsanity == 1) or (loc[1] >= 10000 and world.options.killsanity == 1))):
             goblin_camp_location_names.append(loc[0])
     goblin_camp_locations = get_location_names_with_ids(goblin_camp_location_names)
     goblin_camp.add_locations(goblin_camp_locations, BG3Location)
 
     waukeen_location_names = []
-    for loc in LOCATION_NAME_ID_REGION:
+    for loc in allowed_locs:
         if (loc[2] == 'waukeen' and ((loc[1] < 10000 and world.options.questsanity == 1) or (loc[1] >= 10000 and world.options.killsanity == 1))):
             waukeen_location_names.append(loc[0])
     waukeen_locations = get_location_names_with_ids(waukeen_location_names)
     waukeen.add_locations(waukeen_locations, BG3Location)
 
     hag_location_names = []
-    for loc in LOCATION_NAME_ID_REGION:
+    for loc in allowed_locs:
         if (loc[2] == 'hag' and ((loc[1] < 10000 and world.options.questsanity == 1) or (loc[1] >= 10000 and world.options.killsanity == 1))):
             hag_location_names.append(loc[0])
     hag_locations = get_location_names_with_ids(hag_location_names)
@@ -114,28 +126,28 @@ def create_regular_locations(world: BG3World) -> None:
     # Done with Halsin goal. Following additions are for other goals.
     if (world.options.goal != world.options.goal.option_rescue_halsin):
         underdark_location_names = []
-        for loc in LOCATION_NAME_ID_REGION:
+        for loc in allowed_locs:
             if (loc[2] == 'underdark' and ((loc[1] < 10000 and world.options.questsanity == 1) or (loc[1] >= 10000 and world.options.killsanity == 1))):
                 underdark_location_names.append(loc[0])
         underdark_locations = get_location_names_with_ids(underdark_location_names)
         underdark.add_locations(underdark_locations, BG3Location)
 
         grymforge_location_names = []
-        for loc in LOCATION_NAME_ID_REGION:
+        for loc in allowed_locs:
             if (loc[2] == 'grymforge' and ((loc[1] < 10000 and world.options.questsanity == 1) or (loc[1] >= 10000 and world.options.killsanity == 1))):
                 grymforge_location_names.append(loc[0])
         grymforge_locations = get_location_names_with_ids(grymforge_location_names)
         grymforge.add_locations(grymforge_locations, BG3Location)
 
         monastery_location_names = []
-        for loc in LOCATION_NAME_ID_REGION:
+        for loc in allowed_locs:
             if (loc[2] == 'monastery' and ((loc[1] < 10000 and world.options.questsanity == 1) or (loc[1] >= 10000 and world.options.killsanity == 1))):
                 monastery_location_names.append(loc[0])
         monastery_locations = get_location_names_with_ids(monastery_location_names)
         monastery.add_locations(monastery_locations, BG3Location)
 
         creche_location_names = []
-        for loc in LOCATION_NAME_ID_REGION:
+        for loc in allowed_locs:
             if (loc[2] == 'creche' and ((loc[1] < 10000 and world.options.questsanity == 1) or (loc[1] >= 10000 and world.options.killsanity == 1))):
                 creche_location_names.append(loc[0])
         creche_locations = get_location_names_with_ids(creche_location_names)
@@ -145,42 +157,42 @@ def create_regular_locations(world: BG3World) -> None:
         if (world.options.goal != world.options.goal.option_kill_inquisitor_wwargaz 
             and world.options.goal != world.options.goal.option_act1_user_defined_fights):
             east_act2_location_names = []
-            for loc in LOCATION_NAME_ID_REGION:
+            for loc in allowed_locs:
                 if (loc[2] == 'east_act2' and ((loc[1] < 10000 and world.options.questsanity == 1) or (loc[1] >= 10000 and world.options.killsanity == 1))):
                     east_act2_location_names.append(loc[0])
             east_act2_location = get_location_names_with_ids(east_act2_location_names)
             east_act2.add_locations(east_act2_location, BG3Location)
 
             west_act2_location_names = []
-            for loc in LOCATION_NAME_ID_REGION:
+            for loc in allowed_locs:
                 if (loc[2] == 'west_act2' and ((loc[1] < 10000 and world.options.questsanity == 1) or (loc[1] >= 10000 and world.options.killsanity == 1))):
                     west_act2_location_names.append(loc[0])
             west_act2_location = get_location_names_with_ids(west_act2_location_names)
             west_act2.add_locations(west_act2_location, BG3Location)
 
             last_light_location_names = []
-            for loc in LOCATION_NAME_ID_REGION:
+            for loc in allowed_locs:
                 if (loc[2] == 'last_light' and ((loc[1] < 10000 and world.options.questsanity == 1) or (loc[1] >= 10000 and world.options.killsanity == 1))):
                     last_light_location_names.append(loc[0])
             last_light_locations = get_location_names_with_ids(last_light_location_names)
             last_light.add_locations(last_light_locations, BG3Location)
 
             shar_gauntlet_location_names = []
-            for loc in LOCATION_NAME_ID_REGION:
+            for loc in allowed_locs:
                 if (loc[2] == 'shar_gauntlet' and ((loc[1] < 10000 and world.options.questsanity == 1) or (loc[1] >= 10000 and world.options.killsanity == 1))):
                     shar_gauntlet_location_names.append(loc[0])
             shar_gauntlet_locations = get_location_names_with_ids(shar_gauntlet_location_names)
             shar_gauntlet.add_locations(shar_gauntlet_locations, BG3Location)
 
             moonrise_location_names = []
-            for loc in LOCATION_NAME_ID_REGION:
+            for loc in allowed_locs:
                 if (loc[2] == 'moonrise' and ((loc[1] < 10000 and world.options.questsanity == 1) or (loc[1] >= 10000 and world.options.killsanity == 1))):
                     moonrise_location_names.append(loc[0])
             moonrise_locations = get_location_names_with_ids(moonrise_location_names)
             moonrise.add_locations(moonrise_locations, BG3Location)
 
             mindflayer_location_names = []
-            for loc in LOCATION_NAME_ID_REGION:
+            for loc in allowed_locs:
                 if (loc[2] == 'mindflayer' and ((loc[1] < 10000 and world.options.questsanity == 1) or (loc[1] >= 10000 and world.options.killsanity == 1))):
                     mindflayer_location_names.append(loc[0])
             mindflayer_locations = get_location_names_with_ids(mindflayer_location_names)
@@ -189,42 +201,42 @@ def create_regular_locations(world: BG3World) -> None:
             if (world.options.goal != world.options.goal.option_kill_myrkul 
             and world.options.goal != world.options.goal.option_act2_user_defined_fights):
                 rivington_location_names = []
-                for loc in LOCATION_NAME_ID_REGION:
+                for loc in allowed_locs:
                     if (loc[2] == 'rivington' and ((loc[1] < 10000 and world.options.questsanity == 1) or (loc[1] >= 10000 and world.options.killsanity == 1))):
                         rivington_location_names.append(loc[0])
                 rivington_location = get_location_names_with_ids(rivington_location_names)
                 rivington.add_locations(rivington_location, BG3Location)
 
                 wyrms_crossing_location_names = []
-                for loc in LOCATION_NAME_ID_REGION:
+                for loc in allowed_locs:
                     if (loc[2] == 'wyrms_crossing' and ((loc[1] < 10000 and world.options.questsanity == 1) or (loc[1] >= 10000 and world.options.killsanity == 1))):
                         wyrms_crossing_location_names.append(loc[0])
                 wyrms_crossing_location = get_location_names_with_ids(wyrms_crossing_location_names)
                 wyrms_crossing.add_locations(wyrms_crossing_location, BG3Location)
 
                 lower_city_location_names = []
-                for loc in LOCATION_NAME_ID_REGION:
+                for loc in allowed_locs:
                     if (loc[2] == 'lower_city' and ((loc[1] < 10000 and world.options.questsanity == 1) or (loc[1] >= 10000 and world.options.killsanity == 1))):
                         lower_city_location_names.append(loc[0])
                 lower_city_location = get_location_names_with_ids(lower_city_location_names)
                 lower_city.add_locations(lower_city_location, BG3Location)
 
                 lower_city_sewers_location_names = []
-                for loc in LOCATION_NAME_ID_REGION:
+                for loc in allowed_locs:
                     if (loc[2] == 'lower_city_sewers' and ((loc[1] < 10000 and world.options.questsanity == 1) or (loc[1] >= 10000 and world.options.killsanity == 1))):
                         lower_city_sewers_location_names.append(loc[0])
                 lower_city_sewers_location = get_location_names_with_ids(lower_city_sewers_location_names)
                 lower_city_sewers.add_locations(lower_city_sewers_location, BG3Location)
 
                 iron_throne_location_names = []
-                for loc in LOCATION_NAME_ID_REGION:
+                for loc in allowed_locs:
                     if (loc[2] == 'iron_throne' and ((loc[1] < 10000 and world.options.questsanity == 1) or (loc[1] >= 10000 and world.options.killsanity == 1))):
                         iron_throne_location_names.append(loc[0])
                 iron_throne_location = get_location_names_with_ids(iron_throne_location_names)
                 iron_throne.add_locations(iron_throne_location, BG3Location)
 
                 netherbrain_location_names = []
-                for loc in LOCATION_NAME_ID_REGION:
+                for loc in allowed_locs:
                     if (loc[2] == 'netherbrain' and ((loc[1] < 10000 and world.options.questsanity == 1) or (loc[1] >= 10000 and world.options.killsanity == 1))):
                         netherbrain_location_names.append(loc[0])
                 netherbrain_location = get_location_names_with_ids(netherbrain_location_names)
