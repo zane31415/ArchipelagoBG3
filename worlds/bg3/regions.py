@@ -114,6 +114,14 @@ def create_all_regions(world: BG3World) -> None:
     wyrms_crossing = Region("Wyrm's Crossing", world.player, world.multiworld)
     lower_city = Region("Lower City", world.player, world.multiworld)
     lower_city_sewers = Region("Lower City Sewers", world.player, world.multiworld)
+    # house_of_hope = Region("House of Hope", world.player, world.multiworld)
+    # steel watch foundry
+    # counting house
+    # szarr palace
+    # undercity ruins
+    # blushing mermaid
+    # house of grief
+    # upper city
     iron_throne = Region("Iron Throne", world.player, world.multiworld)
     netherbrain = Region("Netherbrain", world.player, world.multiworld)
 
@@ -148,12 +156,13 @@ def connect_regions(world: BG3World) -> None:
     shar_gauntlet = world.get_region("Gauntlet of Shar")
     mindflayer = world.get_region("Mindflayer Colony")
 
-    #rivington = world.get_region("Rivington")
-    #wyrms_crossing = world.get_region("Wyrm's Crossing")
-    #lower_city = world.get_region("Lower City")
-    #lower_city_sewers = world.get_region("Lower City Sewers")
-    #iron_throne = world.get_region("Iron Throne")
-    #netherbrain = world.get_region("Netherbrain")
+    rivington = world.get_region("Rivington")
+    wyrms_crossing = world.get_region("Wyrm's Crossing")
+    lower_city = world.get_region("Lower City")
+    lower_city_sewers = world.get_region("Lower City Sewers")
+    # house_of_hope = world.get_region("House of Hope")
+    iron_throne = world.get_region("Iron Throne")
+    netherbrain = world.get_region("Netherbrain")
 
     _connect(tutorial, beach, "Tutorial to Beach", world, level_fragments=1, block_items=["Nautiloid Control Panel"]) # Level 2
     _connect(beach, crypt, "Beach to Crypt", world, block_items=["Wither's Crypt"])
@@ -186,4 +195,5 @@ def connect_regions(world: BG3World) -> None:
                 _connect(wyrms_crossing, lower_city, "Wyrm's Crossing to Lower City", world, level_fragments=34, block_items=["Lower City"])
                 _connect(lower_city, lower_city_sewers, "Lower City to Lower City Sewers", world, block_items=["Lower City Sewers"])
                 _connect(lower_city, iron_throne, "Lower City to Iron Throne", world, block_items=["Iron Throne"])
+ #               _connect(lower_city, house_of_hope, "Lower City to House of Hope", world, block_items=["House of Hope"])
                 _connect(lower_city, netherbrain, "Lower City to Netherbrain", world, level_fragments=38, block_items=["Netherbrain"])

@@ -4,7 +4,7 @@
 # Even if a location doesn't exist on specific options, it must be present in this lookup.
 LOCATION_NAME_ID_REGION = [["Tut: Learn about the Helm", 1, "tutorial", []],
     ["Tut: Reach the Helm", 2, "tutorial", []],
-    ["Tut: Connect the Transponder", 3, "tutorial", []],
+    ["Tut: Connect the Transponder", 3, "beach", []],
     ["Tut-SH: Find Captive", 4, "tutorial", []],
     ["Tut-SH: Find the Rune", 5, "tutorial", []],
     ["Tut-SH: Open the Pod", 6, "tutorial", []],

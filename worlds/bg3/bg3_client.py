@@ -27,11 +27,12 @@ from CommonClient import gui_enabled, logger, get_base_parser, handle_url_arg, C
     CommonContext, server_loop
 
 wg_logger = logging.getLogger("WG")
-bugged_locations = ["Victory_Halsin", "Victory_Wwargaz", "Victory_Myrkul", "Bad_State"]
+bugged_locations = ["Victory_Halsin", "Victory_Wwargaz", "Victory_Myrkul", "Victory_Brain", "Bad_State"]
 bad_states = []
 act1bosses = ["Victory_Halsin", "Hag: Kill Auntie Ethel", "Village: Kill Well Spider Queen", "Underdark: Kill Spectator", "Underdark: Kill Bulette", "Grym: Kill Nere", "Forge: Kill Grym", "Creche: Kill Ch'r'ai W'wargaz"]
 act2bosses = ["East Act 2: Kill Shambling Mound", "Reithwin: Kill Cursed Kuo-Toa Chief", "HoH: Kill Malus Thorm", "Tollhouse: Kill Gerringothe Thorm", "Brewery: Kill Thisobald Thorm", "Reithwin: Kill Ch'r'ai Tska'an", "Shar: Kill Yurgir", "Shar: Kill Balthazar", "Colony Showdown: Kill Myrkul"]
-goalbosses = act1bosses + act2bosses
+act3bosses = []
+goalbosses = act1bosses + act2bosses + act3bosses
 goal = -1
 bossmap = {
     "Auntie Ethel": "Hag: Kill Auntie Ethel",
@@ -518,20 +519,26 @@ async def heartbeat_task(ctx: BG3Context):
         await asyncio.sleep(HEARTBEAT_INTERVAL)
 
 
-def acquire_single_instance_lock(se_dir: str):
-    """Returns an opaque lock token, or None if another live client holds it."""
-    if sys.platform == "win32":
-        import ctypes
-        kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
-        handle = kernel32.CreateMutexW(None, True, "ArchipelagoBG3ClientSingleInstance")
-        if not handle:
-            return ("win_mutex", None)  # couldn't even create one; don't block startup
-        ERROR_ALREADY_EXISTS = 183
-        if ctypes.get_last_error() == ERROR_ALREADY_EXISTS:
-            kernel32.CloseHandle(handle)
-            return None
-        return ("win_mutex", handle)
-    # Elsewhere: a pid lockfile with a liveness check.
+def _acquire_lock_windows():
+    """Named-mutex guard. Returns a token, or None if another client holds it."""
+    import ctypes
+    kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+    handle = kernel32.CreateMutexW(None, True, "ArchipelagoBG3ClientSingleInstance")
+    if not handle:
+        return ("win_mutex", None)  # couldn't even create one; don't block startup
+    ERROR_ALREADY_EXISTS = 183
+    if ctypes.get_last_error() == ERROR_ALREADY_EXISTS:
+        kernel32.CloseHandle(handle)
+        return None
+    return ("win_mutex", handle)
+
+
+def _acquire_lock_posix(se_dir: str):
+    """pid-lockfile guard with a liveness check, for Linux/Mac (Steam Deck).
+
+    NB: only ever call this off Windows - os.kill(pid, 0) is a liveness probe
+    on POSIX, but on Windows it calls TerminateProcess and would kill the pid.
+    """
     lock_path = os.path.join(se_dir, "bg3client.lock")
     for _ in range(2):
         try:
@@ -540,17 +547,39 @@ def acquire_single_instance_lock(se_dir: str):
             os.close(fd)
             return ("lockfile", lock_path)
         except FileExistsError:
+            pass
+        # Someone holds it. Are they still alive?
+        try:
+            with open(lock_path) as f:
+                pid = int(f.read().strip())
+        except (ValueError, OSError):
+            pid = None                   # empty/garbage/vanished -> stale
+        if pid is not None:
             try:
-                with open(lock_path) as f:
-                    pid = int(f.read().strip())
-                os.kill(pid, 0)  # raises if no such process
-                return None     # holder is alive
-            except (ValueError, OSError):
-                try:
-                    os.remove(lock_path)  # stale; retry once
-                except OSError:
-                    return None
+                os.kill(pid, 0)
+                return None              # signalled fine -> holder is alive
+            except PermissionError:
+                return None              # exists but owned by another user -> alive
+            except OSError:
+                pass                     # ProcessLookupError -> stale
+        try:
+            os.remove(lock_path)         # stale; drop it and retry once
+        except OSError:
+            return None
     return None
+
+
+def acquire_single_instance_lock(se_dir: str):
+    """Returns an opaque lock token, or None if another live client holds it.
+
+    The per-platform implementations live in their own functions on purpose: a
+    type checker resolves sys.platform statically, so an inline non-Windows
+    branch sitting after an always-returning Windows branch gets flagged
+    unreachable and is then skipped by analysis entirely.
+    """
+    if sys.platform == "win32":
+        return _acquire_lock_windows()
+    return _acquire_lock_posix(se_dir)
 
 
 def release_single_instance_lock(token) -> None:
