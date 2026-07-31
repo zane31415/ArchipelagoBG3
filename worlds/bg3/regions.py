@@ -148,12 +148,12 @@ def connect_regions(world: BG3World) -> None:
     shar_gauntlet = world.get_region("Gauntlet of Shar")
     mindflayer = world.get_region("Mindflayer Colony")
 
-    rivington = world.get_region("Rivington")
-    wyrms_crossing = world.get_region("Wyrm's Crossing")
-    lower_city = world.get_region("Lower City")
-    lower_city_sewers = world.get_region("Lower City Sewers")
-    iron_throne = world.get_region("Iron Throne")
-    netherbrain = world.get_region("Netherbrain")
+    #rivington = world.get_region("Rivington")
+    #wyrms_crossing = world.get_region("Wyrm's Crossing")
+    #lower_city = world.get_region("Lower City")
+    #lower_city_sewers = world.get_region("Lower City Sewers")
+    #iron_throne = world.get_region("Iron Throne")
+    #netherbrain = world.get_region("Netherbrain")
 
     _connect(tutorial, beach, "Tutorial to Beach", world, level_fragments=1, block_items=["Nautiloid Control Panel"]) # Level 2
     _connect(beach, crypt, "Beach to Crypt", world, block_items=["Wither's Crypt"])

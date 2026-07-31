@@ -192,7 +192,9 @@ def create_regular_locations(world: BG3World) -> None:
         goblin_camp.add_event("Victory_Halsin", "Victory", location_type=BG3Location, item_type=items.BG3Item)
     elif (world.options.goal == world.options.goal.option_kill_inquisitor_wwargaz):
         creche.add_event("Victory_Wwargaz", "Victory", location_type=BG3Location, item_type=items.BG3Item)
-    elif (world.options.goal == world.options.goal.option_act1_user_defined_fights or world.options.goal == world.options.goal.option_act2_user_defined_fights):
+    elif (world.options.goal == world.options.goal.option_act1_user_defined_fights):
         creche.add_event("Victory_All_Bosses", "Victory", location_type=BG3Location, item_type=items.BG3Item)
+    elif (world.options.goal == world.options.goal.option_act2_user_defined_fights):
+        mindflayer.add_event("Victory_All_Bosses", "Victory", location_type=BG3Location, item_type=items.BG3Item)
     elif (world.options.goal == world.options.goal.option_kill_myrkul):
         mindflayer.add_event("Victory_Myrkul", "Victory", location_type=BG3Location, item_type=items.BG3Item)
