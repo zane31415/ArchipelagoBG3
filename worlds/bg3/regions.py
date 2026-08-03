@@ -178,7 +178,7 @@ def connect_regions(world: BG3World) -> None:
             _connect(east_act2, last_light, "East Act 2 to Last Light Inn", world, level_fragments=26, block_items=["Last Light Basement"]) # Level 9
             _connect(west_act2, moonrise, "West Act 2 to Moonrise Towers", world, block_items=["Moonlight Towers"])
             _connect(west_act2, shar_gauntlet, "West Act 2 to Gauntlet of Shar", world, block_items=["Underdark", "Grymforge", "Shar Trials"])
-            _connect(moonrise, mindflayer, "Moonrise Towers to Mindflayer Colony", world, level_fragments=30, block_items=["Mindflayer"]) # Level 10
+            _connect(shar_gauntlet, mindflayer, "Gauntlet of Shar to Mindflayer Colony", world, level_fragments=30, block_items=["Mindflayer"]) # Level 10
 
             #if (world.options.goal != world.options.goal.option_kill_myrkul):
             #    mindflayer.connect(rivington, "Mindflayer Colony to Rivington")
