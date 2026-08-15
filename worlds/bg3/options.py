@@ -109,10 +109,10 @@ class QuestSanity(Choice):
 
 class ContainerSanity(Choice):
     """
-    Whether opening containers should be locations. Currently unimplemented and exists only for testing.
-    Even if it was, don't do this.
+    Whether opening containers should be locations. Only value 2 does anything: it turns every
+    openable container placed in a Prologue/Act 1-3 level into a check (~9850 of them).
+    Exists for testing. Don't do this.
     """
-    visibility = Visibility.none
     display_name = "Containersanity"
     option_off = 0
     option_no_really_dont_do_this = 1

@@ -119,6 +119,11 @@ class BG3Context(CommonContext):
 
     def __init__(self, server_address, password):
         super(BG3Context, self).__init__(server_address, password)
+        # CommonContext.__init__ sets self.seed_name = None, which shadows the
+        # class attribute above. Everything here treats "no seed yet" as "",
+        # so re-establish that -- otherwise the file-prefix concatenations blow
+        # up with "NoneType + str" on the first watcher tick before connecting.
+        self.seed_name = ""
         self.send_index: int = 0
         self.syncing = False
         self.awaiting_bridge = False
@@ -241,7 +246,7 @@ class BG3Context(CommonContext):
         """Rewrite {seed}ap_in.json + {seed}ap_names.json, then bump the gen
         file. Payload first (atomic replace), gen bump second, so the mod
         never parses a half-written payload."""
-        if self.seed_name == "":
+        if not self.seed_name:
             # RoomInfo hasn't arrived yet; writing unprefixed files here would
             # just litter the folder with data the game will never read.
             return
@@ -370,7 +375,7 @@ async def game_watcher(ctx: BG3Context):
 
             await process_command_file(ctx)
 
-            if ctx.seed_name != "":
+            if ctx.seed_name:
                 path = os.path.join(ctx.se_bg3, ctx.seed_name + ctx.comm_file_locations_checked)
                 if (os.path.isfile(path)):
                     with open(path, 'r') as f:
@@ -491,7 +496,7 @@ async def heartbeat_task(ctx: BG3Context):
                 "n": n,
                 "server_connected": bool(ctx.server and ctx.slot is not None),
                 "slot": ctx.auth or "",
-                "seed": ctx.seed_name,
+                "seed": ctx.seed_name or "",
             }
             with open(os.path.join(ctx.se_bg3, ctx.heartbeat_out), "w") as f:
                 json.dump(beat, f)
