@@ -95,8 +95,11 @@ def create_all_regions(world: BG3World) -> None:
     crypt = Region("Crypt", world.player, world.multiworld)
     grove = Region("Grove", world.player, world.multiworld)
     blighted_village = Region("Blighted Village", world.player, world.multiworld)
+    underwell = Region("Underwell", world.player, world.multiworld)
     goblin_camp = Region("Goblin Camp", world.player, world.multiworld)
+    inside_goblin_camp = Region("Inside Goblin Camp", world.player, world.multiworld)
     waukeen = Region("Waukeen", world.player, world.multiworld)
+    zhentarim_basement = Region("Zhentarim Basement", world.player, world.multiworld)
     hag = Region("Hag", world.player, world.multiworld)
     underdark = Region("Underdark", world.player, world.multiworld)
     grymforge = Region("Grymforge", world.player, world.multiworld)
@@ -110,25 +113,29 @@ def create_all_regions(world: BG3World) -> None:
     shar_gauntlet = Region("Gauntlet of Shar", world.player, world.multiworld)
     mindflayer = Region("Mindflayer Colony", world.player, world.multiworld)
 
+    astral = Region("Astral Plane", world.player, world.multiworld)
     rivington = Region("Rivington", world.player, world.multiworld)
     wyrms_crossing = Region("Wyrm's Crossing", world.player, world.multiworld)
     lower_city = Region("Lower City", world.player, world.multiworld)
     lower_city_sewers = Region("Lower City Sewers", world.player, world.multiworld)
+    ancient_lair = Region("Ancient Lair", world.player, world.multiworld)
+    undercity_ruins = Region("Undercity Ruins", world.player, world.multiworld)
+    elfsong_basement = Region("Elfsong Basement", world.player, world.multiworld)
+    murder_tribunal = Region("Murder Tribunal", world.player, world.multiworld)
+    endgame = Region("Endgame", world.player, world.multiworld)
     # house_of_hope = Region("House of Hope", world.player, world.multiworld)
     # steel watch foundry
     # counting house
     # szarr palace
-    # undercity ruins
     # blushing mermaid
     # house of grief
     # upper city
     iron_throne = Region("Iron Throne", world.player, world.multiworld)
-    netherbrain = Region("Netherbrain", world.player, world.multiworld)
 
     # Let's put all these regions in a list.
-    regions = [tutorial, beach, crypt, grove, blighted_village, goblin_camp, waukeen, hag, underdark, grymforge, monastery, creche, \
+    regions = [tutorial, beach, crypt, grove, blighted_village, underwell, goblin_camp, inside_goblin_camp, waukeen, zhentarim_basement, hag, underdark, grymforge, monastery, creche, \
             east_act2, west_act2, last_light, moonrise, shar_gauntlet, mindflayer, \
-            rivington, wyrms_crossing, lower_city, lower_city_sewers, iron_throne, netherbrain]
+            astral, rivington, wyrms_crossing, lower_city, lower_city_sewers, ancient_lair, undercity_ruins, elfsong_basement, murder_tribunal, endgame, iron_throne]
 
     # We now need to add these regions to multiworld.regions so that AP knows about their existence.
     world.multiworld.regions += regions
@@ -140,8 +147,11 @@ def connect_regions(world: BG3World) -> None:
     crypt = world.get_region("Crypt")
     grove = world.get_region("Grove")
     blighted_village = world.get_region("Blighted Village")
+    underwell = world.get_region("Underwell")
     goblin_camp = world.get_region("Goblin Camp")
+    inside_goblin_camp = world.get_region("Inside Goblin Camp")
     waukeen = world.get_region("Waukeen")
+    zhentarim_basement = world.get_region("Zhentarim Basement")
     hag = world.get_region("Hag")
     
     underdark = world.get_region("Underdark")
@@ -156,26 +166,34 @@ def connect_regions(world: BG3World) -> None:
     shar_gauntlet = world.get_region("Gauntlet of Shar")
     mindflayer = world.get_region("Mindflayer Colony")
 
+    astral = world.get_region("Astral Plane")
     rivington = world.get_region("Rivington")
     wyrms_crossing = world.get_region("Wyrm's Crossing")
     lower_city = world.get_region("Lower City")
     lower_city_sewers = world.get_region("Lower City Sewers")
+    ancient_lair = world.get_region("Ancient Lair")
+    undercity_ruins = world.get_region("Undercity Ruins")
+    elfsong_basement = world.get_region("Elfsong Basement")
+    murder_tribunal = world.get_region("Murder Tribunal")
+    endgame = world.get_region("Endgame")
     # house_of_hope = world.get_region("House of Hope")
     iron_throne = world.get_region("Iron Throne")
-    netherbrain = world.get_region("Netherbrain")
 
     _connect(tutorial, beach, "Tutorial to Beach", world, level_fragments=1, block_items=["Nautiloid Control Panel"]) # Level 2
     _connect(beach, crypt, "Beach to Crypt", world, block_items=["Wither's Crypt"])
     _connect(beach, grove, "Beach to Grove", world, level_fragments=3) # Level 3
-    _connect(beach, blighted_village, "Beach to Blighted Village", world, level_fragments=3, block_items=["Blighted Village"]) # Level 3
-    _connect(blighted_village, goblin_camp, "Blighted Village to Goblin Camp", world, level_fragments=8, block_items=["Goblin Camp"]) # Level 4.5
+    _connect(beach, blighted_village, "Beach to Blighted Village", world, level_fragments=3) # Level 3
+    _connect(blighted_village, underwell, "Blighted Village to Underwell", world, level_fragments=3, block_items=["Blighted Village"]) # Level 4
+    _connect(blighted_village, goblin_camp, "Blighted Village to Goblin Camp", world, level_fragments=8) # Level 4.5
+    _connect(goblin_camp, inside_goblin_camp, "Goblin Camp to Inside Goblin Camp", world, level_fragments=8, block_items=["Goblin Camp"]) # Level 4.5
     _connect(blighted_village, hag, "Blighted Village to Hag", world, level_fragments=10, stats=4, block_items=["Hag's Fireplace"]) # Level 5
-    _connect(blighted_village, waukeen, "Blighted Village to Waukeen", world, level_fragments=6, block_items=["Zhentarim Basement"]) # Level 4
+    _connect(blighted_village, waukeen, "Blighted Village to Waukeen", world, level_fragments=6) # Level 4
+    _connect(waukeen, zhentarim_basement, "Waukeen to Zhentarim Basement", world, level_fragments=6, block_items=["Zhentarim Basement"])
 
     if (world.options.goal != world.options.goal.option_rescue_halsin):
-        _connect(goblin_camp, underdark, "Goblin Camp to Underdark", world, level_fragments=10, block_items=["Underdark"]) # Level 5
+        _connect(inside_goblin_camp, underdark, "Goblin Camp to Underdark", world, level_fragments=10, block_items=["Underdark"]) # Level 5
         _connect(underdark, grymforge, "Underdark to Grymforge", world, level_fragments=14, block_items=["Grymforge"]) # Level 6
-        _connect(blighted_village, underdark, "Blighted Village to Underdark", world, level_fragments=10, block_items=["Underdark"]) # Level 5
+        _connect(underwell, underdark, "Blighted Village to Underdark", world, level_fragments=10, block_items=["Underdark"]) # Level 5
         _connect(blighted_village, monastery, "Blighted Village to Monastery", world, level_fragments=18, block_items=["Goblin Camp", "Mountain Pass"]) # Level 7
         _connect(monastery, creche, "Monastery to Creche", world, block_items=["Creche"])
 
@@ -189,11 +207,18 @@ def connect_regions(world: BG3World) -> None:
             _connect(west_act2, shar_gauntlet, "West Act 2 to Gauntlet of Shar", world, block_items=["Underdark", "Grymforge", "Shar Trials"])
             _connect(shar_gauntlet, mindflayer, "Gauntlet of Shar to Mindflayer Colony", world, level_fragments=30, block_items=["Mindflayer"]) # Level 10
 
-            if (world.options.goal != world.options.goal.option_kill_myrkul):
-                _connect(mindflayer, rivington, "Mindflayer Colony to Rivington", world, block_items=["Rivington"])
-                _connect(rivington, wyrms_crossing, "Rivington to Wyrm's Crossing", world, block_items=["Wyrm's Crossing"])
-                _connect(wyrms_crossing, lower_city, "Wyrm's Crossing to Lower City", world, level_fragments=34, block_items=["Lower City"])
-                _connect(lower_city, lower_city_sewers, "Lower City to Lower City Sewers", world, block_items=["Lower City Sewers"])
-                _connect(lower_city, iron_throne, "Lower City to Iron Throne", world, block_items=["Iron Throne"])
+            if (world.options.goal != world.options.goal.option_kill_myrkul
+                and world.options.goal != world.options.goal.option_act2_user_defined_fights):
+                _connect(mindflayer, astral, "Mindflayer Colony to Astral Plane", world, level_fragments=34, block_items=["Act 3"])
+                _connect(astral, rivington, "Astral Plane to Rivington", world)#, block_items=["Rivington"])
+                _connect(rivington, wyrms_crossing, "Rivington to Wyrm's Crossing", world)#, block_items=["Wyrm's Crossing"])
+                _connect(wyrms_crossing, lower_city, "Wyrm's Crossing to Lower City", world, level_fragments=34)#, block_items=["Lower City"])
+                _connect(lower_city, lower_city_sewers, "Lower City to Lower City Sewers", world)#, block_items=["Lower City Sewers"])
+                _connect(lower_city, ancient_lair, "Lower City to Ancient Lair", world)#, block_items=["Ancient Lair"])
+                _connect(lower_city_sewers, undercity_ruins, "Lower City Sewers to Undercity Ruins", world)#, block_items=["Undercity Ruins"])
+                _connect(lower_city, elfsong_basement, "Lower City to Elfsong Basement", world)#, block_items=["Elfsong Basement"])
+                _connect(lower_city, murder_tribunal, "Lower City to Murder Tribunal", world)#, block_items=["Murder Tribunal"])
+                _connect(lower_city, iron_throne, "Lower City to Iron Throne", world)#, block_items=["Iron Throne"])
  #               _connect(lower_city, house_of_hope, "Lower City to House of Hope", world, block_items=["House of Hope"])
-                _connect(lower_city, netherbrain, "Lower City to Netherbrain", world, level_fragments=38, block_items=["Netherbrain"])
+                _connect(lower_city, endgame, "Lower City to Endgame", world, level_fragments=38)#, block_items=["Endgame"])
+    

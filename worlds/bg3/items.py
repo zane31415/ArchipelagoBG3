@@ -100,6 +100,7 @@ ITEM_TUPLES = [
     ["Reithwin's Mason's Guild", "Gate-ReithwinsMasonsGuild", 112, ItemClassification.progression, 2],
     ["Shar Trials", "Gate-SharTrials", 113, ItemClassification.progression, 2],
     ["Progressive Moonlight Towers", "Gate-ProgressiveMoonlightTowers", 114, ItemClassification.progression, 2],
+    ["Act 3", "Gate-Act3", 115, ItemClassification.progression, 3],
     
 ] + [[item[0], item[1], index + 1000, ItemClassification.useful, item[2]] for index, item in enumerate(EQUIPMENT)] \
   + [[item[0], item[1], index + 5000, ItemClassification.filler, 0] for index, item in enumerate(FILLER_EQUIPMENT)] \
@@ -203,6 +204,8 @@ def create_all_items(world: BG3World) -> None:
             required_stat = 16
         elif (world.options.goal == world.options.goal.option_kill_myrkul or world.options.goal == world.options.goal.option_act2_user_defined_fights):
             required_stat = 20
+        elif (world.options.goal == world.options.goal.option_kill_nether_brain or world.options.goal == world.options.goal.option_act3_user_defined_fights):
+            required_stat = 24
         stats_per_slot = (required_stat - 8) // world.options.statsanity_boost_by
         if (world.options.statsanity == world.options.statsanity.option_universal_stats or world.options.statsanity == world.options.statsanity.option_tav_only_stats):
             itempool += [world.create_item("Strength Stat Boost") for _ in range(stats_per_slot)]

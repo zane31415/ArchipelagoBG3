@@ -52,7 +52,8 @@ class UserDefinedFights(OptionSet):
         "Ch'r'ai Tska'an",
         "Yurgir",
         "Balthazar",
-        "Myrkul"
+        "Myrkul",
+        "Netherbrain"
     ]
     display_name = "User Defined Fights"
     default = {"Auntie Ethel",
@@ -70,7 +71,8 @@ class UserDefinedFights(OptionSet):
         "Ch'r'ai Tska'an",
         "Yurgir",
         "Balthazar",
-        "Myrkul"}
+        "Myrkul",
+        "Netherbrain"}
 
 class KillSanity(Choice):
     """
@@ -81,15 +83,31 @@ class KillSanity(Choice):
     and are not likely to be missed by advancing plot. There still do exist some fights that are technically missable (paladins, Nere, etc), but
     only by transitions that have explicit warnings on them.
 
-    Nonmissable Hostiles Location count - Halsin: ~140, Wwargaz: ~250
+    Nonmissable Hostiles Location count - Halsin: 156, Wwargaz: 287, Myrkul: 535, Netherbrain: Not implemented yet
     """
     display_name = "Killsanity"
     option_off = 0
     option_all_nonmissable_hostiles = 1
-    #option_include_missible_bosses = 2
-    #option_important_hostiles = 2
-    #option_progressive_count = 3
+    #option_include_missible = 2
+    #option_nonmissable_nongood = 3
+    #option_missable_nongood = 4
+    #option_nonmissable_scorched_earth = 5
+    #option_everything_everywhere_they_all_die = 6
     default = option_off
+
+class KillSanityStrictness(Choice):
+    """
+    If Killsanity is on, determines how strict the requirements are for a kill to count as a location.
+    Strict: Only kills by player characters count.
+    Normal: Only kills count. This is the default.
+    Relaxed: As long as they die, it counts.
+    """
+    visibility = Visibility.none
+    display_name = "Killsanity Strictness"
+    option_strict = 0
+    option_normal = 1
+    option_relaxed = 2
+    default = option_normal
 
 class QuestSanity(Choice):
     """
@@ -98,12 +116,12 @@ class QuestSanity(Choice):
     Due to the nature of the branching of BG3 paths, many quests had to have choices as to what options were viable.
     Currently the only option is "Most Content" - skill checks are not expected to be passed _unless_ future content depends on it.
 
-    Most Content Location count - Halsin: ~200, Wwargaz: ~300
+    Most Content Location count - Halsin: 180, Wwargaz: 284, Myrkul: 350, Netherbrain: Not implemented yet
     """
     display_name = "Questsanity"
     option_off = 0
     option_most_content = 1
-    #option_important_hostiles = 2
+    #option_random_alignment = 2
     #option_progressive_count = 3
     default = option_most_content
 
@@ -111,7 +129,9 @@ class ContainerSanity(Choice):
     """
     Whether opening containers should be locations. Only value 2 does anything: it turns every
     openable container placed in a Prologue/Act 1-3 level into a check (~9850 of them).
-    Exists for testing. Don't do this.
+    Exists for testing. Don't do this. Very unstable, likely broken.
+
+    Containersanity location count - Halsin: 1799, Wwargaz: 2556, Myrkul: 4809, Netherbrain: 9972
     """
     display_name = "Containersanity"
     option_off = 0
@@ -158,10 +178,8 @@ class CharactersInLogic(OptionSet):
     A character NOT listed here has their character-specific plot events removed from the
     location pool: locations named "<Character>: ..." and any "Recruit <Character>" location
     (e.g. removing Lae'zel drops "Lae'zel: Deal with Patrol" and "Beach-LZ: Recruit Lae'zel").
-    Other locations that merely depend on a character are not yet auto-detected.
-    If Statsanity is on, determines which characters' stats are included in logic.
     If Questsanity is on, determines which characters' quest completions are included in logic.
-    Currently in testing.
+    Currently in testing - not considered stable. In particular Halsin seems required through act 2.
     """
     valid_keys = ["Astarion", "Gale", "Karlach", "Lae'zel", "Shadowheart", "Wyll", "Halsin", "Minthara"]
     display_name = "Characters in Logic"
@@ -174,13 +192,15 @@ class Deathlink(Toggle):
     display_name = "Deathlink"
     default = False
 
-class AdditionalLevelUps(Range):
+class AdditionalLevelFragments(Range):
     """
     For an easier play through, this adds items to support additional levels into the pool. Not recommended.
+    Each level up requires 4 fragments, so if you add 40 fragments, there will be 10 additional level ups available.
+    Logic does not account for these- you are still expected to be able to clear the locations at the expected levels.
     """
-    display_name = "Additional Level Ups"
+    display_name = "Additional Level Fragments"
     range_start = 0
-    range_end = 10
+    range_end = 40
     default = 0
 
 class SyncMethod(Choice):
@@ -322,6 +342,7 @@ class BG3Options(PerGameCommonOptions):
     goal: Goal
     user_defined_fights: UserDefinedFights
     killsanity: KillSanity
+    killsanity_strictness: KillSanityStrictness
     questsanity: QuestSanity
     containersanity: ContainerSanity
     statsanity: StatSanity
@@ -334,7 +355,7 @@ class BG3Options(PerGameCommonOptions):
     add_act2_treasure: AddAct2Treasure
     add_act3_treasure: AddAct3Treasure
     trim_treasure_method: TrimTreasureMethod
-    additional_level_ups: AdditionalLevelUps
+    additional_level_ups: AdditionalLevelFragments
     traps_percentage: TrapsPercentage
     enabled_traps: EnabledTraps
     block_entrances: BlockEntrances

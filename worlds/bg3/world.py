@@ -4,6 +4,7 @@ from collections.abc import Mapping
 from typing import Any, ClassVar
 
 # Imports of base Archipelago modules must be absolute.
+from Options import OptionError
 from worlds.AutoWorld import World
 
 # Imports of your world's files must be relative.
@@ -61,7 +62,7 @@ class BG3World(World):
     # Keep in sync with the option reads in items.py / locations.py.
     _UT_GEN_OPTION_KEYS: ClassVar = (
         "goal", "sync_method", "user_defined_fights", "deathlink",
-        "killsanity", "questsanity", "containersanity",
+        "killsanity", "killsanity_strictness", "questsanity", "containersanity",
         "statsanity", "statsanity_boost_by", "characters_in_logic",
         "add_act1a_treasure", "add_act1b_treasure",
         "add_act2_treasure", "add_act3_treasure",
@@ -95,6 +96,8 @@ class BG3World(World):
                     slot_data["death_link"]
                 )
 
+        self.validate_user_defined_fights()
+
         if self.options.block_entrances == 1:
             self.multiworld.early_items[self.player]["Nautiloid Control Panel"] = 1
 
@@ -106,6 +109,35 @@ class BG3World(World):
         # UniversalTracker/worlds/tracker/docs/apworld-integration.md
         # "Generating without a YAML".
         return slot_data
+
+    FIGHT_ACTS = {
+        "Auntie Ethel": 1,
+        "Spider Queen": 1,
+        "Spectator": 1,
+        "Bulette": 1,
+        "Nere": 1,
+        "Grym": 1,
+        "Ch'r'ai W'wargaz": 1,
+        "Shambling Mound": 2,
+        "Cursed Kuo-Toa Chief": 2,
+        "Malus Thorm": 2,
+        "Gerringothe Thorm": 2,
+        "Thisobald Thorm": 2,
+        "Ch'r'ai Tska'an": 2,
+        "Yurgir": 2,
+        "Balthazar": 2,
+        "Myrkul": 2,
+        "Netherbrain": 3,
+    }
+    def validate_user_defined_fights(self) -> None:
+        if self.options.goal == self.options.goal.option_act1_user_defined_fights:
+            for fight in self.options.user_defined_fights:
+                if fight not in self.FIGHT_ACTS or self.FIGHT_ACTS[fight] > 1:
+                    raise OptionError(f"Invalid user-defined fight for Act 1: {fight}")
+        elif self.options.goal == self.options.goal.option_act2_user_defined_fights:
+            for fight in self.options.user_defined_fights:
+                if fight not in self.FIGHT_ACTS or self.FIGHT_ACTS[fight] > 2:
+                    raise OptionError(f"Invalid user-defined fight for Act 2: {fight}")
 
     # Our world class must have certain functions ("steps") that get called during generation.
     # The main ones are: create_regions, set_rules, create_items.

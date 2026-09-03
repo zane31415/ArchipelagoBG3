@@ -27,11 +27,11 @@ from CommonClient import gui_enabled, logger, get_base_parser, handle_url_arg, C
     CommonContext, server_loop
 
 wg_logger = logging.getLogger("WG")
-bugged_locations = ["Victory_Halsin", "Victory_Wwargaz", "Victory_Myrkul", "Victory_Brain", "Bad_State"]
+bugged_locations = ["Victory_Halsin", "Victory_Wwargaz", "Victory_Myrkul", "Victory_Netherbrain", "Bad_State"]
 bad_states = []
-act1bosses = ["Victory_Halsin", "Hag: Kill Auntie Ethel", "Village: Kill Well Spider Queen", "Underdark: Kill Spectator", "Underdark: Kill Bulette", "Grym: Kill Nere", "Forge: Kill Grym", "Creche: Kill Ch'r'ai W'wargaz"]
+act1bosses = ["Hag: Kill Auntie Ethel", "Village: Kill Well Spider Queen", "Underdark: Kill Spectator", "Underdark: Kill Bulette", "Grym: Kill Nere", "Forge: Kill Grym", "Creche: Kill Ch'r'ai W'wargaz"]
 act2bosses = ["East Act 2: Kill Shambling Mound", "Reithwin: Kill Cursed Kuo-Toa Chief", "HoH: Kill Malus Thorm", "Tollhouse: Kill Gerringothe Thorm", "Brewery: Kill Thisobald Thorm", "Reithwin: Kill Ch'r'ai Tska'an", "Shar: Kill Yurgir", "Shar: Kill Balthazar", "Colony Showdown: Kill Myrkul"]
-act3bosses = []
+act3bosses = ["Endgame: Kill the Netherbrain"]
 goalbosses = act1bosses + act2bosses + act3bosses
 goal = -1
 bossmap = {
@@ -51,7 +51,9 @@ bossmap = {
     "Ch'r'ai Tska'an": "Reithwin: Kill Ch'r'ai Tska'an",
     "Yurgir": "Shar: Kill Yurgir",
     "Balthazar": "Shar: Kill Balthazar",
-    "Myrkul": "Colony Showdown: Kill Myrkul"
+    "Myrkul": "Colony Showdown: Kill Myrkul",
+
+    "Netherbrain": "Endgame: Kill the Netherbrain"
 }
 
 HEARTBEAT_INTERVAL = 5.0        # seconds between heartbeat_client.json writes
@@ -307,7 +309,7 @@ class BG3Context(CommonContext):
             Utils.async_start(self.update_death_link(self.has_death_link), name="Update Deathlink")
             global goal
             goal = slot_data["goal"]
-            if (goal == 2 or goal == 4):
+            if (goal == 2 or goal == 4 or goal == 6):
                 global user_defined_fights
                 global goalbosses
                 user_defined_fights = slot_data["user_defined_fights"]
@@ -384,7 +386,7 @@ async def game_watcher(ctx: BG3Context):
                     atomic_write_text(path, "[]")
                 if goal != -1:
                     global goalbosses
-                    if goal not in [0,1,2,3,4]:
+                    if goal not in [0,1,2,3,4,5,6]:
                         logger.error(f"Your version of the apworld is not compatible with server's version. Please update your apworld and try again.")
                         logger.error(goal)
                     for loc in bg3LocationsToSend:
@@ -404,7 +406,9 @@ async def game_watcher(ctx: BG3Context):
                                     victory = True
                                 elif apLoc == "Victory_Myrkul" and goal == 3:
                                     victory = True
-                                elif (apLoc in goalbosses) and (goal == 2 or goal == 4):
+                                elif apLoc == "Victory_Netherbrain" and goal == 5:
+                                    victory = True
+                                elif (apLoc in goalbosses) and (goal == 2 or goal == 4 or goal == 6):
                                     remaining_bosses = [
                                         boss for boss in goalbosses
                                         if LOCATION_NAME_TO_ID[boss] not in ctx.checked_locations
@@ -423,7 +427,7 @@ async def game_watcher(ctx: BG3Context):
                         elif loc not in bugged_locations:
                             # logger.error(f"Please tell BG3 channel about {loc}- it was not handled. This probably doesn't break anything, but it should be looked at.")
                             bugged_locations.append(loc)
-                    if goal == 2 or goal == 4:
+                    if goal == 2 or goal == 4 or goal == 6:
                         remaining_bosses = [
                             boss for boss in goalbosses
                             if LOCATION_NAME_TO_ID[boss] not in ctx.checked_locations

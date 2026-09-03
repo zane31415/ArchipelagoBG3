@@ -65,9 +65,13 @@ def create_regular_locations(world: BG3World) -> None:
     crypt = world.get_region("Crypt")
     grove = world.get_region("Grove")
     blighted_village = world.get_region("Blighted Village")
+    underwell = world.get_region("Underwell")
     goblin_camp = world.get_region("Goblin Camp")
+    inside_goblin_camp = world.get_region("Inside Goblin Camp")
     waukeen = world.get_region("Waukeen")
+    zhentarim_basement = world.get_region("Zhentarim Basement")
     hag = world.get_region("Hag")
+    
     underdark = world.get_region("Underdark")
     grymforge = world.get_region("Grymforge")
     monastery = world.get_region("Monastery")
@@ -80,12 +84,18 @@ def create_regular_locations(world: BG3World) -> None:
     shar_gauntlet = world.get_region("Gauntlet of Shar")
     mindflayer = world.get_region("Mindflayer Colony")
 
+    astral = world.get_region("Astral Plane")
     rivington = world.get_region("Rivington")
     wyrms_crossing = world.get_region("Wyrm's Crossing")
     lower_city = world.get_region("Lower City")
     lower_city_sewers = world.get_region("Lower City Sewers")
+    ancient_lair = world.get_region("Ancient Lair")
+    undercity_ruins = world.get_region("Undercity Ruins")
+    elfsong_basement = world.get_region("Elfsong Basement")
+    murder_tribunal = world.get_region("Murder Tribunal")
+    endgame = world.get_region("Endgame")
+    # house_of_hope = world.get_region("House of Hope")
     iron_throne = world.get_region("Iron Throne")
-    netherbrain = world.get_region("Netherbrain")
 
     tutorial_location_names = []
     for loc in allowed_locs:
@@ -122,6 +132,13 @@ def create_regular_locations(world: BG3World) -> None:
     blighted_village_locations = get_location_names_with_ids(blighted_village_location_names)
     blighted_village.add_locations(blighted_village_locations, BG3Location)
 
+    underwell_location_names = []
+    for loc in allowed_locs:
+        if (loc[2] == 'underwell' and isSanityActive(loc[1], world)):
+            underwell_location_names.append(loc[0])
+    underwell_locations = get_location_names_with_ids(underwell_location_names)
+    underwell.add_locations(underwell_locations, BG3Location)
+
     goblin_camp_location_names = []
     for loc in allowed_locs:
         if (loc[2] == 'goblin_camp' and isSanityActive(loc[1], world)):
@@ -129,12 +146,26 @@ def create_regular_locations(world: BG3World) -> None:
     goblin_camp_locations = get_location_names_with_ids(goblin_camp_location_names)
     goblin_camp.add_locations(goblin_camp_locations, BG3Location)
 
+    inside_goblin_camp_location_names = []
+    for loc in allowed_locs:
+        if (loc[2] == 'inside_goblin_camp' and isSanityActive(loc[1], world)):
+            inside_goblin_camp_location_names.append(loc[0])
+    inside_goblin_camp_locations = get_location_names_with_ids(inside_goblin_camp_location_names)
+    inside_goblin_camp.add_locations(inside_goblin_camp_locations, BG3Location)
+
     waukeen_location_names = []
     for loc in allowed_locs:
         if (loc[2] == 'waukeen' and isSanityActive(loc[1], world)):
             waukeen_location_names.append(loc[0])
     waukeen_locations = get_location_names_with_ids(waukeen_location_names)
     waukeen.add_locations(waukeen_locations, BG3Location)
+
+    zhentarim_basement_location_names = []
+    for loc in allowed_locs:
+        if (loc[2] == 'zhentarim_basement' and isSanityActive(loc[1], world)):
+            zhentarim_basement_location_names.append(loc[0])
+    zhentarim_basement_locations = get_location_names_with_ids(zhentarim_basement_location_names)
+    zhentarim_basement.add_locations(zhentarim_basement_locations, BG3Location)
 
     hag_location_names = []
     for loc in allowed_locs:
@@ -220,6 +251,13 @@ def create_regular_locations(world: BG3World) -> None:
             
             if (world.options.goal != world.options.goal.option_kill_myrkul 
             and world.options.goal != world.options.goal.option_act2_user_defined_fights):
+                astral_location_names = []
+                for loc in allowed_locs:
+                    if (loc[2] == 'astral' and isSanityActive(loc[1], world)):
+                        astral_location_names.append(loc[0])
+                astral_location = get_location_names_with_ids(astral_location_names)
+                astral.add_locations(astral_location, BG3Location)
+                
                 rivington_location_names = []
                 for loc in allowed_locs:
                     if (loc[2] == 'rivington' and isSanityActive(loc[1], world)):
@@ -248,6 +286,34 @@ def create_regular_locations(world: BG3World) -> None:
                 lower_city_sewers_location = get_location_names_with_ids(lower_city_sewers_location_names)
                 lower_city_sewers.add_locations(lower_city_sewers_location, BG3Location)
 
+                ancient_lair_location_names = []
+                for loc in allowed_locs:
+                    if (loc[2] == 'ancient_lair' and isSanityActive(loc[1], world)):
+                        ancient_lair_location_names.append(loc[0])
+                ancient_lair_location = get_location_names_with_ids(ancient_lair_location_names)
+                ancient_lair.add_locations(ancient_lair_location, BG3Location)
+
+                undercity_ruins_location_names = []
+                for loc in allowed_locs:
+                    if (loc[2] == 'undercity_ruins' and isSanityActive(loc[1], world)):
+                        undercity_ruins_location_names.append(loc[0])
+                undercity_ruins_location = get_location_names_with_ids(undercity_ruins_location_names)
+                undercity_ruins.add_locations(undercity_ruins_location, BG3Location)
+
+                elfsong_basement_location_names = []
+                for loc in allowed_locs:
+                    if (loc[2] == 'elfsong_basement' and isSanityActive(loc[1], world)):
+                        elfsong_basement_location_names.append(loc[0])
+                elfsong_basement_location = get_location_names_with_ids(elfsong_basement_location_names)
+                elfsong_basement.add_locations(elfsong_basement_location, BG3Location)
+
+                murder_tribunal_location_names = []
+                for loc in allowed_locs:
+                    if (loc[2] == 'murder_tribunal' and isSanityActive(loc[1], world)):
+                        murder_tribunal_location_names.append(loc[0])
+                murder_tribunal_location = get_location_names_with_ids(murder_tribunal_location_names)
+                murder_tribunal.add_locations(murder_tribunal_location, BG3Location)
+
                 iron_throne_location_names = []
                 for loc in allowed_locs:
                     if (loc[2] == 'iron_throne' and isSanityActive(loc[1], world)):
@@ -255,12 +321,12 @@ def create_regular_locations(world: BG3World) -> None:
                 iron_throne_location = get_location_names_with_ids(iron_throne_location_names)
                 iron_throne.add_locations(iron_throne_location, BG3Location)
 
-                netherbrain_location_names = []
+                endgame_location_names = []
                 for loc in allowed_locs:
-                    if (loc[2] == 'netherbrain' and isSanityActive(loc[1], world)):
-                        netherbrain_location_names.append(loc[0])
-                netherbrain_location = get_location_names_with_ids(netherbrain_location_names)
-                netherbrain.add_locations(netherbrain_location, BG3Location)
+                    if (loc[2] == 'endgame' and isSanityActive(loc[1], world)):
+                        endgame_location_names.append(loc[0])
+                endgame_location = get_location_names_with_ids(endgame_location_names)
+                endgame.add_locations(endgame_location, BG3Location)
 
 
     if (world.options.goal == world.options.goal.option_rescue_halsin):
@@ -272,10 +338,8 @@ def create_regular_locations(world: BG3World) -> None:
     elif (world.options.goal == world.options.goal.option_act2_user_defined_fights):
         mindflayer.add_event("Victory_All_Bosses", "Victory", location_type=BG3Location, item_type=items.BG3Item)
     elif (world.options.goal == world.options.goal.option_act3_user_defined_fights):
-        # FIXME: 76473a58 lumped act3 in with act1; kept as-is through the rebase rather
-        # than changed silently, but creche is an Act 1 region - netherbrain looks intended.
-        creche.add_event("Victory_All_Bosses", "Victory", location_type=BG3Location, item_type=items.BG3Item)
+        endgame.add_event("Victory_All_Bosses", "Victory", location_type=BG3Location, item_type=items.BG3Item)
     elif (world.options.goal == world.options.goal.option_kill_myrkul):
         mindflayer.add_event("Victory_Myrkul", "Victory", location_type=BG3Location, item_type=items.BG3Item)
     elif (world.options.goal == world.options.goal.option_kill_nether_brain):
-        netherbrain.add_event("Victory_Netherbrain", "Victory", location_type=BG3Location, item_type=items.BG3Item)
+        endgame.add_event("Victory_Netherbrain", "Victory", location_type=BG3Location, item_type=items.BG3Item)
