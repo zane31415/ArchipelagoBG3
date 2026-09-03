@@ -173,12 +173,12 @@ def create_all_items(world: BG3World) -> None:
         itempool += [world.create_item("Nautiloid Control Panel")]
         itempool += [world.create_item("Wither's Crypt")]
         itempool += [world.create_item("Goblin Camp")]
+        itempool += [world.create_item("Hag's Fireplace")]
+        itempool += [world.create_item("Zhentarim Basement")]
         if (world.options.goal == world.options.goal.option_rescue_halsin):
             itempool += [world.create_item("Blighted Village Well")]
         else:
             itempool += [world.create_item("Underdark")]
-            itempool += [world.create_item("Hag's Fireplace")]
-            itempool += [world.create_item("Zhentarim Basement")]
             itempool += [world.create_item("Grymforge")]
             itempool += [world.create_item("Mountain Pass")]
             itempool += [world.create_item("Creche")]

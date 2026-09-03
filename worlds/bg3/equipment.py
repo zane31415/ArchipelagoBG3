@@ -2,7 +2,6 @@
 EQUIPMENT = [
     ["Amulet of Branding", "894a6847-3d80-4368-86fb-354c8cb23525", 1],
     ["Amulet of Restoration", "b648ee98-f648-411b-be7e-6c50ca9b463c", 1],
-    ["Amulet of Restoration", "b648ee98-f648-411b-be7e-6c50ca9b463c", 3],
     ["Amulet of the Drunkard", "b6510e39-54fc-45fa-a49e-e7d8cbfdafe6", 3],
     ["Amulet of the Harpers", "ddc9ac0b-8e68-422b-8d9d-c081629ab4ad", 2],
     ["Returning Pike", "1047ac9f-7860-44fd-9154-0f06fe64936c", 1],
@@ -400,7 +399,6 @@ EQUIPMENT = [
     ["Crusher's Ring","3023d5a5-14f0-4549-8ff2-1f34336c243c",0],
 #    ["Eversight Ring","0661eb9b-0924-450d-923b-1e371de444ae",2],
     ["Gandrel's Aspiration","12710611-6c85-4280-a597-8286e18f5740",0],
-    ["Gloves of Archery","6d84b9e5-e9e4-477c-8d5b-a3f232a4415a",0],
     ["Gloves of Baneful Striking","9e259ea7-291f-41bd-b275-cc49edba3bb6",1],
     ["Gloves of Belligerent Skies","c987b6e4-adcb-47d6-8dfd-6d4d2f15a381",1],
     ["Gloves of Power","d22e2679-aff0-4244-9ed2-7aac981b82cf",0],
