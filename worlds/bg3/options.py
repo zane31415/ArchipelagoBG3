@@ -271,6 +271,20 @@ class TrapsPercentage(Range):
     range_end = 100
     default = 0
 
+class LocalFillPercent(Range):
+    """
+    What percent of your filler and trap items are placed in your own world instead of
+    being shuffled into the multiworld.
+    Useful with large location counts (containersanity especially), which would otherwise
+    flood every other player's pool with BG3 lockpicks and healing potions.
+    Items named in local_items or non_local_items are left alone. Does nothing in a
+    single player game.
+    """
+    display_name = "Local Fill Percent"
+    range_start = 0
+    range_end = 98
+    default = 0
+
 class EnabledTraps(OptionSet):
     """
     Which kinds of traps should be enabled. Currently monster spawns do not scale to level.
@@ -357,6 +371,7 @@ class BG3Options(PerGameCommonOptions):
     trim_treasure_method: TrimTreasureMethod
     additional_level_ups: AdditionalLevelFragments
     traps_percentage: TrapsPercentage
+    local_fill_percent: LocalFillPercent
     enabled_traps: EnabledTraps
     block_entrances: BlockEntrances
     dev_debug_on: DevDebugOn

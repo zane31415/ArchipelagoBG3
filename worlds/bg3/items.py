@@ -267,4 +267,22 @@ def create_all_items(world: BG3World) -> None:
     needed_number_of_filler_items = number_of_unfilled_locations - number_of_items
     itempool += [world.create_filler() for _ in range(needed_number_of_filler_items)]
 
+    # local_fill_percent: hold back a share of our filler/traps from the multiworld pool
+    # and place it in our own world during pre_fill. AP has no built-in switch for this;
+    # the item has to leave the pool here, because nothing may be added to the pool after
+    # create_items. Traps count as filler for this purpose - you trap yourself.
+    world.local_filler = []
+    if world.options.local_fill_percent and world.multiworld.players > 1:
+        # Skip anything the player pinned with local_items/non_local_items and let normal
+        # fill honour those in its own way.
+        eligible = [item for item in itempool
+                    if item.classification in (ItemClassification.filler, ItemClassification.trap)
+                    and item.name not in world.options.local_items
+                    and item.name not in world.options.non_local_items]
+        world.random.shuffle(eligible)
+        amount = int(len(eligible) * world.options.local_fill_percent / 100)
+        world.local_filler = eligible[:amount]
+        held_back = {id(item) for item in world.local_filler}
+        itempool = [item for item in itempool if id(item) not in held_back]
+
     world.multiworld.itempool += itempool

@@ -378,7 +378,7 @@ BG3_LOCATION_LIST = [
     ["GLO_Tadpole-HalsinAtGrove_Known", [], 0],
     ["GLO_Tadpole-HalsinAtGrove_Known_Asharak", [], 0],
     ["GLO_Tadpole-HalsinAtGrove_Known_Cerys", [], 0],
-    ["GLO_Tadpole-HalsinAtGrove_Known_Talked", [], 0],
+    ["GLO_Tadpole-HalsinAtGrove_Known_Talked", ["Gobs: Learn the Priestess' Name", "Gobs: Learn the Drow's Name", "Gobs: Learn the King's Name", "Gobs: Defeat (Knock Out) Minthara", "Gobs-Halsin: Learn Halsin is Missing", "Gobs-Halsin: Found Halsin", "Gobs-Halsin: Learn Halsin is a Bear", "Gobs-Halsin: Tell Halsin about Victory", "Victory_Halsin"], 0],
     ["GLO_Tadpole-HalsinAtGrove_Unknown", [], 0],
     ["GLO_Tadpole-HalsinAtGrove_Unknown_Asharak", [], 0],
     ["GLO_Tadpole-HalsinAtGrove_Unknown_Cerys", [], 0],

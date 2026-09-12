@@ -4,6 +4,7 @@ from collections.abc import Mapping
 from typing import Any, ClassVar
 
 # Imports of base Archipelago modules must be absolute.
+from BaseClasses import CollectionState
 from Options import OptionError
 from worlds.AutoWorld import World
 
@@ -68,6 +69,7 @@ class BG3World(World):
         "add_act2_treasure", "add_act3_treasure",
         "trim_treasure_method", "additional_level_ups",
         "traps_percentage", "enabled_traps", "block_entrances",
+        "local_fill_percent",
     )
 
     # Our world class must have a static location_name_to_id and item_name_to_id defined.
@@ -78,6 +80,11 @@ class BG3World(World):
     # There is always one region that the generator starts from & assumes you can always go back to.
     # This defaults to "Menu", but you can change it by overriding origin_region_name.
     origin_region_name = "Tutorial"
+
+    # Filler held out of the multiworld pool by the local_fill_percent option and placed
+    # in our own world during pre_fill. Populated by items.create_all_items; the class-level
+    # default keeps pre_fill safe if create_items never ran (e.g. some tracker paths).
+    local_filler: list[items.BG3Item] = []
 
     def generate_early(self) -> None:
         # UT re-gen passthrough: restore options recorded in slot_data.
@@ -156,6 +163,30 @@ class BG3World(World):
     # We also put this in a different file, the same one that create_items is in.
     def create_item(self, name: str) -> items.BG3Item:
         return items.create_item_with_correct_classification(self, name)
+
+    # local_fill_percent placement. The items were pulled out of the pool in create_items,
+    # so every one of them must land here or the pool no longer matches the location count.
+    def pre_fill(self) -> None:
+        if not self.local_filler:
+            return
+
+        # Reserve a couple of sphere 1 locations. Without this, a high percentage can fill
+        # every early location with filler and leave normal fill nowhere to seed progression.
+        sphere_one = self.multiworld.get_reachable_locations(CollectionState(self.multiworld), self.player)
+        reserved = set(self.random.sample(sphere_one, min(2, len(sphere_one))))
+        viable_locations = [loc for loc in self.multiworld.get_unfilled_locations(self.player)
+                            if loc not in reserved
+                            and loc.name not in self.options.priority_locations.value]
+
+        if len(viable_locations) < len(self.local_filler):
+            raise OptionError(
+                f"BG3: not enough locations to satisfy local_fill_percent for {self.player_name}. "
+                f"Needed {len(self.local_filler)}, found {len(viable_locations)}. "
+                f"This is usually caused by excess plando or priority locations.")
+
+        self.random.shuffle(viable_locations)
+        for item, location in zip(self.local_filler, viable_locations):
+            location.place_locked_item(item)
 
     # For features such as item links and panic-method start inventory, AP may ask your world to create extra filler.
     # The way it does this is by calling get_filler_item_name.
