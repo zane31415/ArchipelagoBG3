@@ -1,3 +1,10 @@
+Changes to base game: Characters will not level naturally, and most rare+ equipment has been removed from lootables.
+
+Items are Level Fragments, and most uncommon+ equipment available in the game, depending on yaml selection.
+
+Locations are either questsanity (complete quest updates) or killsanity (kill hostile creatures) or containersanity (open chests/vases/bookcases).
+
+
 Installation instructions:
 1. Download the AP world from https://github.com/zane31415/ArchipelagoBG3/releases and double-click the downloaded apworld to install to Archipelago. Launch Archipelago, click "generate templates" (this generates the yaml file).
 2. Now for the BG3 mod part. Go to https://github.com/Norbyte/bg3se/releases and follow the installation instructions for the Script Extender.
@@ -8,11 +15,8 @@ Installation instructions:
 7. Launch BG3, go to mod manager, make sure the Archipelago box is checked (probably still checked from earlier, but still). Exit mod manager, start new game.
 8. Play the game. Enjoy!
 
-Press **U** in-game to open the Archipelago status window: connection state, items/checks counters, recent items, gate locks and a resync button. If the game can't detect a running BG3 client for ~15 seconds it will warn you in-game (that warning is also how you find out you accidentally launched the Text Client).
+If you are playing in v0.7.0 or later, you can press **U** in-game to open the Archipelago status window: connection state, items/checks counters, recent items, gate locks and a resync button. If the game can't detect a running BG3 client for ~15 seconds it will warn you in-game (that warning is also how you find out you accidentally launched the Text Client).
 If for some reason the connection seems to stall out or if blocked entrances aren't cleared, casting the sync scroll has a backup system attached to it that _should_ fix any issues. If it doesn't, please let me know.
-Changes to base game: Characters will not level naturally, and most rare+ equipment has been removed from lootables.
-Items are Level Fragments, and most uncommon+ equipment available in the game, depending on yaml selection.
-Locations are either questsanity (complete quest updates) or killsanity (kill hostile creatures) or containersanity (open chests/vases/bookcases).
 
 There is a poptracker available at https://github.com/jeditobe1/bg3-ap-tracker/releases/latest. UT also supports this poptracker.
 
